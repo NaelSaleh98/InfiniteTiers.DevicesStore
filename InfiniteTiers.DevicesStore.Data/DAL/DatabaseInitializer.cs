@@ -12,7 +12,6 @@ namespace InfiniteTiers.DevicesStore.Data.DAL
         public static void Initialize(ItgContext context)
         {
             context.Database.EnsureCreated();
-
             if (context.Users.Any())
             {
                 return;   // DB has been seeded
@@ -35,9 +34,9 @@ namespace InfiniteTiers.DevicesStore.Data.DAL
             #region Add Roles
             var roles = new Role[]
             {
-                new Role{Id=1, Name="employee"},
-                new Role{Id=2, Name="operation manager"},
-                new Role{Id=3, Name="admin"}
+                new Role{Name="employee"},
+                new Role{Name="operation manager"},
+                new Role{Name="admin"}
             };
             foreach (Role role in roles)
             {
@@ -65,8 +64,8 @@ namespace InfiniteTiers.DevicesStore.Data.DAL
             #region Add Categories
             var categories = new Category[]
             {
-                new Category{Id=101, Name="Charger"},
-                new Category{Id=102, Name="Remote Controller"}
+                new Category{Name="Charger"},
+                new Category{Name="Remote Controller"}
 
             };
             foreach (Category category in categories)
@@ -93,10 +92,10 @@ namespace InfiniteTiers.DevicesStore.Data.DAL
             #region Add Category Devices
             var categoryDevices = new CategoryDevice[]
             {
-                new CategoryDevice{DeviceId=1, CategoryId=101},
-                new CategoryDevice{DeviceId=2, CategoryId=101},
-                new CategoryDevice{DeviceId=3, CategoryId=102},
-                new CategoryDevice{DeviceId=4, CategoryId=102},
+                new CategoryDevice{DeviceId=1, CategoryId=1},
+                new CategoryDevice{DeviceId=2, CategoryId=1},
+                new CategoryDevice{DeviceId=3, CategoryId=2},
+                new CategoryDevice{DeviceId=4, CategoryId=2},
 
             };
             foreach (CategoryDevice categoryDevice in categoryDevices)
