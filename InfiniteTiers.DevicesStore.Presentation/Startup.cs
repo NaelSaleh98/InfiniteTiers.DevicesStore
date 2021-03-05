@@ -26,6 +26,8 @@ namespace InfiniteTiers.DevicesStore.Presentation
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddRazorPages();
+
             services.AddDbContext<ItgContext>(options =>
               options.UseSqlServer(Configuration.GetConnectionString("ItgContext")));
         }
@@ -48,6 +50,7 @@ namespace InfiniteTiers.DevicesStore.Presentation
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -55,6 +58,7 @@ namespace InfiniteTiers.DevicesStore.Presentation
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
         }
     }
