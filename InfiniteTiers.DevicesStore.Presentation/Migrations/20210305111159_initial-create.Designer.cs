@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InfiniteTiers.DevicesStore.Presentation.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20210223123748_initial-Create")]
-    partial class initialCreate
+    [Migration("20210305111159_initial-create")]
+    partial class initialcreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
