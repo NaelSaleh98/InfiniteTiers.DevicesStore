@@ -75,43 +75,13 @@ namespace InfiniteTiers.DevicesStore.Data.DAL
             context.SaveChanges();
             #endregion
 
-            #region Add Role Users
-            var roleUsers = new RoleUser[]
-            {
-                new RoleUser{UserId=1, RoleId=3 },
-                new RoleUser{UserId=2, RoleId=2},
-                new RoleUser{UserId=3, RoleId=1}
-            };
-            foreach (RoleUser roleUser in roleUsers)
-            {
-                context.RoleUsers.Add(roleUser);
-            }
-            context.SaveChanges();
-            #endregion
-
-            #region Add Category Devices
-            var categoryDevices = new CategoryDevice[]
-            {
-                new CategoryDevice{DeviceId=1, CategoryId=1},
-                new CategoryDevice{DeviceId=2, CategoryId=1},
-                new CategoryDevice{DeviceId=3, CategoryId=2},
-                new CategoryDevice{DeviceId=4, CategoryId=2},
-
-            };
-            foreach (CategoryDevice categoryDevice in categoryDevices)
-            {
-                context.CategoryDevices.Add(categoryDevice);
-            }
-            context.SaveChanges();
-            #endregion
-
             #region Add User Devices
             var userDevices = new UserDevice[]
            {
-                new UserDevice{DeviceId=1, UserId=2,StartTime=DateTime.Parse("15-1-2020")},
-                new UserDevice{DeviceId=2, UserId=2,StartTime=DateTime.Parse("15-1-2020")},
-                new UserDevice{DeviceId=3, UserId=2,StartTime=DateTime.Parse("15-1-2020")},
-                new UserDevice{DeviceId=4, UserId=2,StartTime=DateTime.Parse("15-1-2020")}
+                new UserDevice{StartTime=DateTime.Parse("15-1-2020")},
+                new UserDevice{StartTime=DateTime.Parse("15-1-2020")},
+                new UserDevice{StartTime=DateTime.Parse("15-1-2020")},
+                new UserDevice{StartTime=DateTime.Parse("15-1-2020")}
 
             };
             foreach (UserDevice userDevice in userDevices)

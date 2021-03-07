@@ -16,8 +16,6 @@ namespace InfiniteTiers.DevicesStore.Data.DAL
         public DbSet<Role> Roles { get; set; }
         public DbSet<Device> Devices { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<CategoryDevice> CategoryDevices  { get; set; }
         public DbSet<UserDevice> UserDevices { get; set; }
-        public DbSet<RoleUser> RoleUsers { get; set; }
     }
 }
