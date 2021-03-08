@@ -20,27 +20,13 @@ namespace InfiniteTiers.DevicesStore.Data.DAL
             #region Add Users
             var users = new User[]
             {
-                new User{FullName="Nael Saleh", UserName="NaelSaleh", Email="nael@gmail.com",Password="nael123" },
-                new User{FullName="Deyaa Hamdan", UserName="DeyaaHamdan", Email="deyaa@gmail.com",Password="deyaa123" },
-                new User{FullName="Rayan Hamdan", UserName="RayanHamdan", Email="rayan@gmail.com",Password="rayan123" },
+                new User{FullName="Nael Saleh" },
+                new User{FullName="Deyaa Hamdan"},
+                new User{FullName="Rayan Hamdan"},
             };
             foreach (User user in users)
             {
                 context.Users.Add(user);
-            }
-            context.SaveChanges();
-            #endregion
-
-            #region Add Roles
-            var roles = new Role[]
-            {
-                new Role{Name="employee"},
-                new Role{Name="operation manager"},
-                new Role{Name="admin"}
-            };
-            foreach (Role role in roles)
-            {
-                context.Roles.Add(role);
             }
             context.SaveChanges();
             #endregion

@@ -23,7 +23,6 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         public async Task<IActionResult> Index()
         {
             var users = _context.Users
-                .Include(x => x.Role)
                 .Include(x => x.Devices);
             return View(await users.ToListAsync());
         }
@@ -37,7 +36,6 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             }
 
             var user = await _context.Users
-                .Include(x => x.Role)
                 .Include(x => x.Devices)
                 .FirstOrDefaultAsync(m => m.UserId == id);
             if (user == null)

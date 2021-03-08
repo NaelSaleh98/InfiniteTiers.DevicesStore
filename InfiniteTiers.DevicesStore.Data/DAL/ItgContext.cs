@@ -13,7 +13,6 @@ namespace InfiniteTiers.DevicesStore.Data.DAL
         public ItgContext(DbContextOptions<ItgContext> options) : base(options) { }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<Role> Roles { get; set; }
         public DbSet<Device> Devices { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<UserDevice> UserDevices { get; set; }
