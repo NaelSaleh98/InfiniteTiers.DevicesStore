@@ -22,7 +22,8 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         // GET: Categories
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Categories.ToListAsync());
+            var categories = _context.Categories.Include(x => x.Devices);
+            return View(await categories.ToListAsync());
         }
 
         // GET: Categories/Details/5
