@@ -22,7 +22,10 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         // GET: UserDevices
         public async Task<IActionResult> Index()
         {
-            return View(await _context.UserDevices.ToListAsync());
+            var userDevices = _context.UserDevices
+                .Include(x => x.User)
+                .Include(x => x.Device);
+            return View(await userDevices.ToListAsync());
         }
 
         // GET: UserDevices/Details/5

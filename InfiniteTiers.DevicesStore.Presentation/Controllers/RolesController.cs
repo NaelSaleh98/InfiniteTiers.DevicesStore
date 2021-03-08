@@ -22,7 +22,8 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         // GET: Roles
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Roles.ToListAsync());
+            var roles = _context.Roles.Include(x => x.Users);
+            return View(await roles.ToListAsync());
         }
 
         // GET: Roles/Details/5

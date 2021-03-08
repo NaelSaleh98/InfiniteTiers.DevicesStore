@@ -23,7 +23,10 @@
                 @Html.DisplayNameFor(model => model.Email)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Password)
+                Role
+            </th>
+            <th>
+                Devices
             </th>
             <th></th>
         </tr>
@@ -41,7 +44,15 @@
                 @Html.DisplayFor(modelItem => item.Email)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Password)
+                @Html.DisplayFor(modelItem => item.Role.Name)
+            </td>
+            <td>
+                @foreach (var device in item.Devices)
+                {
+                <div>
+                    @Html.DisplayFor(modelItem => device.Name)
+                </div>
+                }
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.UserId">Edit</a> |

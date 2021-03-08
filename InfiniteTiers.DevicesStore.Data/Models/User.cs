@@ -13,6 +13,6 @@ namespace InfiniteTiers.DevicesStore.Data.Models
         public string Password { get; set; }
 
         public Role Role { get; set; }
-        public virtual ICollection<Device> Devices { get; set; }
+        public ICollection<Device> Devices { get; set; }
     }
 }

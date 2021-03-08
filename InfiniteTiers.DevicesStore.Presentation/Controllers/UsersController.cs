@@ -22,7 +22,10 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         // GET: Users
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Users.ToListAsync());
+            var users = _context.Users
+                .Include(x => x.Role)
+                .Include(x => x.Devices);
+            return View(await users.ToListAsync());
         }
 
         // GET: Users/Details/5
@@ -34,6 +37,8 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             }
 
             var user = await _context.Users
+                .Include(x => x.Role)
+                .Include(x => x.Devices)
                 .FirstOrDefaultAsync(m => m.UserId == id);
             if (user == null)
             {

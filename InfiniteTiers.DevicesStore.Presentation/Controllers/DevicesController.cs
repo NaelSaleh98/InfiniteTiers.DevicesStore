@@ -34,6 +34,8 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             }
 
             var device = await _context.Devices
+                .Include(x => x.Category)
+                .Include(x => x.User)
                 .FirstOrDefaultAsync(m => m.DeviceId == id);
             if (device == null)
             {

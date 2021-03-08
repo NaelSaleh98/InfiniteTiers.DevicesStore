@@ -16,6 +16,6 @@ namespace InfiniteTiers.DevicesStore.Data.Models
         public bool IsActive { get; set; }
 
         public Category Category { get; set; }
-        public virtual User User { get; set; }
+        public User User { get; set; }
     }
 }
