@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -14,12 +19,15 @@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ITG Device Store</a>
-                <a class="navbar-brand" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
-                <a class="navbar-brand" asp-area="" asp-controller="Roles" asp-action="Index">Roles</a>
-                <a class="navbar-brand" asp-area="" asp-controller="Devices" asp-action="Index">Devices</a>
-                <a class="navbar-brand" asp-area="" asp-controller="Categories" asp-action="Index">Categories</a>
-                <a class="navbar-brand" asp-area="" asp-controller="UserDevices" asp-action="Index">User Devices History</a>
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <a class="navbar-brand" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
+                    <a class="navbar-brand" asp-area="" asp-controller="Roles" asp-action="Index">Roles</a>
+                    <a class="navbar-brand" asp-area="" asp-controller="Devices" asp-action="Index">Devices</a>
+                    <a class="navbar-brand" asp-area="" asp-controller="Categories" asp-action="Index">Categories</a>
+                    <a class="navbar-brand" asp-area="" asp-controller="UserDevices" asp-action="Index">User Devices History</a>
 
+                }
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <partial name="_LoginPartial.cshtml" />
                 </div>
