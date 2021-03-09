@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace InfiniteTiers.DevicesStore.Presentation.Controllers
 {
-    [Authorize]
+    [Authorize (Roles ="Admin")]
 
     public class UsersController : Controller
     {
@@ -60,7 +60,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UserId,FullName,UserName,Email,Password")] User user)
+        public async Task<IActionResult> Create([Bind("UserId,FullName")] User user)
         {
             if (ModelState.IsValid)
             {
@@ -92,7 +92,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId,FullName,UserName,Email,Password")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("UserId,FullName")] User user)
         {
             if (id != user.UserId)
             {

@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace InfiniteTiers.DevicesStore.Presentation.Controllers
 {
-    [Authorize(Roles ="Operation Manager")]
+    [Authorize(Roles = "Operation Manager")]
 
     public class CategoriesController : Controller
     {
