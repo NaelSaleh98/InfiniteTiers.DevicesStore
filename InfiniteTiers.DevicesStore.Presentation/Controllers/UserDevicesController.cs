@@ -7,9 +7,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using InfiniteTiers.DevicesStore.Data.DAL;
 using InfiniteTiers.DevicesStore.Data.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InfiniteTiers.DevicesStore.Presentation.Controllers
 {
+    [Authorize]
+
     public class UserDevicesController : Controller
     {
         private readonly ItgContext _context;
