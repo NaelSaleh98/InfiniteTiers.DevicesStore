@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using InfiniteTiers.DevicesStore.Data.DAL;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace InfiniteTiers.DevicesStore.Presentation
 {
@@ -33,7 +34,7 @@ namespace InfiniteTiers.DevicesStore.Presentation
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, RoleManager<IdentityRole> roleManager)
         {
             if (env.IsDevelopment())
             {
@@ -60,6 +61,18 @@ namespace InfiniteTiers.DevicesStore.Presentation
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
+
+            Task.Run(() => this.CreateRoles(roleManager)).Wait();
+        }
+        private async Task CreateRoles(RoleManager<IdentityRole> roleManager)
+        {
+            foreach (string rol in this.Configuration.GetSection("Roles").Get<List<string>>())
+            {
+                if (!await roleManager.RoleExistsAsync(rol))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(rol));
+                }
+            }
         }
     }
 }

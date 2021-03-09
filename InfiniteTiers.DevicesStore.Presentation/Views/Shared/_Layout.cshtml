@@ -23,9 +23,12 @@
                 {
                     <a class="navbar-brand" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
                     <a class="navbar-brand" asp-area="" asp-controller="Devices" asp-action="Index">Devices</a>
-                    <a class="navbar-brand" asp-area="" asp-controller="Categories" asp-action="Index">Categories</a>
                     <a class="navbar-brand" asp-area="" asp-controller="UserDevices" asp-action="Index">User Devices History</a>
 
+                }
+                @if (SignInManager.IsSignedIn(User) && User.IsInRole("om"))
+                {
+                    <a class="navbar-brand" asp-area="" asp-controller="Categories" asp-action="Index">Categories</a>
                 }
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <partial name="_LoginPartial.cshtml" />
