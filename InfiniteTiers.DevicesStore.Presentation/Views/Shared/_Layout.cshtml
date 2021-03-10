@@ -30,7 +30,7 @@
                     }
                     @if (User.IsInRole("Admin") || User.IsInRole("Operation Manager"))
                     {
-                        @*<a class="navbar-brand" asp-area="" asp-controller="Devices" asp-action="Index">Devices</a>*@
+                        <a class="navbar-brand" asp-area="" asp-controller="Devices" asp-action="Index">Devices</a>
                         <a class="navbar-brand" asp-area="" asp-controller="Categories" asp-action="Index">Categories</a>
                     }
                 }

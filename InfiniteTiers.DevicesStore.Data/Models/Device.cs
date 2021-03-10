@@ -15,6 +15,7 @@ namespace InfiniteTiers.DevicesStore.Data.Models
         public DateTime PurchaseDate { get; set; }
         public bool IsActive { get; set; }
 
+        public int CategoryId { get; set; }
         public Category Category { get; set; }
     }
 }
