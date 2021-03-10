@@ -85,7 +85,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
 
-                   await _userManager.AddToRoleAsync(user, "User");
+                   await _userManager.AddToRoleAsync(user, "Operation Manager");
 
                     _logger.LogInformation("User created a new account with password.");
 
