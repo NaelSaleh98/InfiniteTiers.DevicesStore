@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using InfiniteTiers.DevicesStore.Presentation.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace InfiniteTiers.DevicesStore.Presentation.Data
 {
-    public class AuthDbContext : IdentityDbContext<IdentityUser>
+    public class AuthDbContext : IdentityDbContext<ApplicationUser>
     {
         public AuthDbContext(DbContextOptions<AuthDbContext> options)
             : base(options)

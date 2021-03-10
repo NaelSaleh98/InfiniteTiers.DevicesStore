@@ -1,4 +1,5 @@
 ﻿using System;
+using InfiniteTiers.DevicesStore.Presentation.Areas.Identity.Data;
 using InfiniteTiers.DevicesStore.Presentation.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -19,7 +20,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Areas.Identity
                     options.UseSqlServer(
                         context.Configuration.GetConnectionString("AuthDbContextConnection")));
 
-                services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+                services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
                     .AddEntityFrameworkStores<AuthDbContext>();
             });

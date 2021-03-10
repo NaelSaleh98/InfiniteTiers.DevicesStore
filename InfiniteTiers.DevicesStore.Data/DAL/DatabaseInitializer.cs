@@ -12,32 +12,18 @@ namespace InfiniteTiers.DevicesStore.Data.DAL
         public static void Initialize(ItgContext context)
         {
             context.Database.EnsureCreated();
-            if (context.Users.Any())
+            if (context.Devices.Any())
             {
                 return;   // DB has been seeded
             }
 
-            #region Add Users
-            var users = new User[]
-            {
-                new User{FullName="Nael Saleh" },
-                new User{FullName="Deyaa Hamdan"},
-                new User{FullName="Rayan Hamdan"},
-            };
-            foreach (User user in users)
-            {
-                context.Users.Add(user);
-            }
-            context.SaveChanges();
-            #endregion
-
             #region Add Devices
             var devices = new Device[]
             {
-                new Device{Name="Samsung charger",Description="Charge mobile", Manufacturer="Samsung", Model="1.2.5", SerialNumber="124579843246845684", PurchaseDate=DateTime.Parse("1-1-2015"),IsActive=true},
-                new Device{Name="Mi charger",Description="Charge mobile", Manufacturer="Mi", Model="2.3.6", SerialNumber="224579843246845684", PurchaseDate=DateTime.Parse("2-1-2016"),IsActive=true},
-                new Device{Name="Conditioner remote",Description="Conditioner", Manufacturer="Samsung", Model="3.4.7", SerialNumber="324579843246845684", PurchaseDate=DateTime.Parse("3-1-2017"),IsActive=true},
-                new Device{Name="Conditioner remote",Description="Conditioner", Manufacturer="LG", Model="4.5.8", SerialNumber="424579843246845684", PurchaseDate=DateTime.Parse("4-1-2018"),IsActive=true},
+                new Device{Name="Samsung charger",Description="Charge mobile", Manufacturer="Samsung", Model="1.2.5", SerialNumber="124579843246845684", PurchaseDate=DateTime.Parse("1-1-2015"),IsActive=false},
+                new Device{Name="Mi charger",Description="Charge mobile", Manufacturer="Mi", Model="2.3.6", SerialNumber="224579843246845684", PurchaseDate=DateTime.Parse("2-1-2016"),IsActive=false},
+                new Device{Name="Conditioner remote",Description="Conditioner", Manufacturer="Samsung", Model="3.4.7", SerialNumber="324579843246845684", PurchaseDate=DateTime.Parse("3-1-2017"),IsActive=false},
+                new Device{Name="Conditioner remote",Description="Conditioner", Manufacturer="LG", Model="4.5.8", SerialNumber="424579843246845684", PurchaseDate=DateTime.Parse("4-1-2018"),IsActive=false},
 
             };
             foreach (Device device in devices)
@@ -59,22 +45,6 @@ namespace InfiniteTiers.DevicesStore.Data.DAL
                 context.Categories.Add(category);
             }
             context.SaveChanges();
-            #endregion
-
-            #region Add User Devices
-            var userDevices = new UserDevice[]
-           {
-                new UserDevice{StartTime=DateTime.Parse("15-1-2020")},
-                new UserDevice{StartTime=DateTime.Parse("15-1-2020")},
-                new UserDevice{StartTime=DateTime.Parse("15-1-2020")},
-                new UserDevice{StartTime=DateTime.Parse("15-1-2020")}
-
-            };
-            foreach (UserDevice userDevice in userDevices)
-            {
-                context.UserDevices.Add(userDevice);
-            }
-            context.SaveChanges(); 
             #endregion
         }
     }

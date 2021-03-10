@@ -1,11 +1,11 @@
-﻿using System;
+﻿using InfiniteTiers.DevicesStore.Data.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace InfiniteTiers.DevicesStore.Data.Models
+namespace InfiniteTiers.DevicesStore.Presentation.Areas.Identity.Data
 {
     public class UserDevice
     {
@@ -19,7 +19,7 @@ namespace InfiniteTiers.DevicesStore.Data.Models
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime EndTime { get; set; }
 
-        public User User { get; set; }
+        public ApplicationUser User { get; set; }
         public Device Device { get; set; }
     }
 }
