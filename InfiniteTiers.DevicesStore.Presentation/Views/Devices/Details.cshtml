@@ -5,75 +5,82 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Device Details</h1>
+<h1 class="text-center text-primary">
+    <a asp-action="Index" class="float-left text-dark"><i class="fas fa-long-arrow-alt-left"></i></a>
+    @Html.DisplayFor(model => model.Name)
+    <a asp-action="Edit" asp-route-id="@Model.DeviceId" class="float-right text-dark"><i class="fas fa-edit fa-s"></i></a>
+</h1>
+
 <hr />
 <div>
     <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
+        <dt class="col-md-2">
+            Id
         </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Name)
+        <dd class="col-md-4">
+            @Html.DisplayFor(model => model.DeviceId)
         </dd>
-    </dl>
-    <dl class="row">
-        <dt class="col-sm-2">
+        <dt class="col-md-2">
+            Owned By
+        </dt>
+        <dd class="col-md-4">
+            <i>
+                @ViewData["User"]
+            </i>
+        </dd>
+        <dt class="col-md-2">
+ 
+            @Html.DisplayNameFor(model => model.Manufacturer)
+        </dt>
+        <dd class="col-md-4">
+            @Html.DisplayFor(model => model.Manufacturer)
+        </dd>
+        <dt class="col-md-2">
+            @Html.DisplayNameFor(model => model.Model)
+        </dt>
+        <dd class="col-md-4">
+            @Html.DisplayFor(model => model.Model)
+        </dd>
+        <dt class="col-md-2">
+            Serial Number
+        </dt>
+        <dd class="col-md-4">
+            @Html.DisplayFor(model => model.SerialNumber)
+        </dd>
+        <dt class="col-md-2">
+            Purchase Date
+        </dt>
+        <dd class="col-md-4">
+            @Html.DisplayFor(model => model.PurchaseDate)
+        </dd>
+        <dt class="col-md-2">
+            Category
+        </dt>
+        <dd class="col-md-4">
+            @Html.DisplayFor(model => model.Category.Name)
+        </dd>
+        <dt class="col-md-2">
+            Status
+        </dt>
+        <dd class="col-md-4">
+            @if (Model.IsActive)
+            {
+                <div class="text-center bg-success">
+                    Active
+                </div>
+            }
+            else
+            {
+                <div class="text-center bg-danger">
+                    Inactive
+                </div> 
+            }
+        </dd>
+        <dt class="col-md-2">
             @Html.DisplayNameFor(model => model.Description)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-md-10">
             @Html.DisplayFor(model => model.Description)
         </dd>
     </dl>
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Manufacturer)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Manufacturer)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Model)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Model)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class="col-sm-2">
-            Serial Number
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.SerialNumber)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class="col-sm-2">
-            Purchase Date
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.PurchaseDate)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class="col-sm-2">
-            Device Category
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Category.Name)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.IsActive)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.IsActive)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.DeviceId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
 </div>

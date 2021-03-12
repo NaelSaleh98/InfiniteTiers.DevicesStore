@@ -7,16 +7,20 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using InfiniteTiers.DevicesStore.Data.DAL;
 using InfiniteTiers.DevicesStore.Data.Models;
+using Microsoft.AspNetCore.Authorization;
+using InfiniteTiers.DevicesStore.Presentation.Data;
 
 namespace InfiniteTiers.DevicesStore.Presentation.Controllers
 {
+    [Authorize(Roles ="Admin")]
     public class DevicesController : Controller
     {
         private readonly ItgContext _context;
-
-        public DevicesController(ItgContext context)
+        private readonly AuthDbContext _contextAuth;
+        public DevicesController(ItgContext context, AuthDbContext contextauth)
         {
             _context = context;
+            _contextAuth = contextauth;
         }
 
         // GET: Devices
@@ -45,6 +49,9 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 return NotFound();
             }
 
+            var user = _contextAuth.Users.FirstOrDefaultAsync(u => u.Id == device.ApplicationUserId);
+            ViewData["User"] = user.Result.UserName;
+
             return View(device);
         }
 
@@ -60,11 +67,16 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DeviceId,Name,Description,Manufacturer,Model,SerialNumber,PurchaseDate,IsActive,CategoryId")] Device device)
+        public async Task<IActionResult> Create([Bind("Name,Description,Manufacturer,Model,SerialNumber,PurchaseDate,CategoryId")] Device device)
         {
             if (ModelState.IsValid)
             {
+                var role = _contextAuth.Roles.FirstOrDefaultAsync(r => r.Name == "Operation Manager");
+                var roleUser = _contextAuth.UserRoles.FirstOrDefaultAsync(ur => ur.RoleId == role.Result.Id);
+                device.ApplicationUserId = roleUser.Result.UserId;
+                device.IsActive = false;
                 _context.Add(device);
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }

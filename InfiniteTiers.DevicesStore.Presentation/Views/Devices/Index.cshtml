@@ -1,48 +1,90 @@
 ﻿@model IEnumerable<InfiniteTiers.DevicesStore.Data.Models.Device>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Devices";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Devices</h1>
+<h1 class="text-center">All Devices</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+
+<table class="table table-hover">
     <thead>
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                Device Category
+                @Html.DisplayNameFor(model => model.Manufacturer)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IsActive)
+                Category
             </th>
-            <th></th>
+            <th>
+                Purchase Date
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+                <a asp-action="Create" class="text-decoration-none">
+                    <i class="fas fa-plus"></i>
+                    NEW!
+                </a>
+            </th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category.Name)
-            </td>
-            <td>
-                @(item.IsActive ? "Active" : "Inactive")
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.DeviceId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.DeviceId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.DeviceId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Manufacturer)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PurchaseDate.Year)/@Html.DisplayFor(modelItem => item.PurchaseDate.Month)/@Html.DisplayFor(modelItem => item.PurchaseDate.Day)
+                </td>
+                <td>
+                    @if (item.IsActive)
+                    {
+                        <div class="text-center bg-success">
+                            Active
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center bg-danger">
+                            Inactive
+                        </div>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.DeviceId" style="padding: 0px 5px; margin:0px 3px">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a asp-action="Details" asp-route-id="@item.DeviceId" style="padding: 0px 5px; margin:0px 3px">
+                        <i class="fas fa-info"></i>
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@item.DeviceId" style="padding: 0px 5px; margin:0px 3px">
+                        <i class="far fa-trash-alt"></i>
+                    </a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+<style>
+    td, th {
+        text-align: center;
+    }
+
+    a:hover {
+        text-decoration: none;
+    }
+</style>

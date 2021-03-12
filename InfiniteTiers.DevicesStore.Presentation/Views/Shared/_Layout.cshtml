@@ -17,26 +17,30 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ITG Device Store</a>
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark  border-bottom box-shadow mb-3">
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index" style="font-size:xx-large">ITG Device Store</a>
+
+            <ul class="navbar-nav mr-auto">
                 @if (SignInManager.IsSignedIn(User))
                 {
 
                     @if (User.IsInRole("Admin"))
                     {
+                        <li class="nav-item">
+                            <a class="nav-link text-primary" asp-area="" asp-controller="Devices" asp-action="Index" style="font-size:x-large">Devices</a>
+                        </li>
                         @*<a class="navbar-brand" asp-area="" asp-controller="Users" asp-action="Index">Users</a>*@
                         @*<a class="navbar-brand" asp-area="" asp-controller="UserDevices" asp-action="Index">User Devices History</a>*@
                     }
                     @if (User.IsInRole("Admin") || User.IsInRole("Operation Manager"))
                     {
-                        <a class="navbar-brand" asp-area="" asp-controller="Devices" asp-action="Index">Devices</a>
-                        <a class="navbar-brand" asp-area="" asp-controller="Categories" asp-action="Index">Categories</a>
+                        @*<a class="navbar-brand" asp-area="" asp-controller="Categories" asp-action="Index">Categories</a>*@
                     }
                 }
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <partial name="_LoginPartial.cshtml" />
-                </div>
+            </ul>
+
+            <div class="d-sm-inline-flex justify-content-between">
+                <partial name="_LoginPartial.cshtml" />
             </div>
         </nav>
     </header>
