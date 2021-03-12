@@ -7,9 +7,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using InfiniteTiers.DevicesStore.Data.DAL;
 using InfiniteTiers.DevicesStore.Data.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InfiniteTiers.DevicesStore.Presentation.Controllers
 {
+    [Authorize(Roles = "Admin")]
+
     public class CategoriesController : Controller
     {
         private readonly ItgContext _context;
@@ -22,7 +25,9 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         // GET: Categories
         public async Task<IActionResult> Index()
         {
-            var categories = _context.Categories.Include(c => c.Devices);
+            var categories = _context.Categories
+                            .Include(c => c.Devices)
+                            .OrderBy(c => c.Name);
             return View(await categories.ToListAsync());
         }
 
@@ -36,6 +41,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
 
             var category = await _context.Categories
                 .Include(c => c.Devices)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.CategoryId == id);
             if (category == null)
             {
@@ -56,7 +62,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CategoryId,Name")] Category category)
+        public async Task<IActionResult> Create([Bind("Name")] Category category)
         {
             if (ModelState.IsValid)
             {
@@ -75,7 +81,9 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Categories.FindAsync(id);
+            var category = await _context.Categories
+                            .AsNoTracking()
+                            .FirstOrDefaultAsync(d => d.CategoryId == id);
             if (category == null)
             {
                 return NotFound();
@@ -127,7 +135,8 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             }
 
             var category = await _context.Categories
-                .FirstOrDefaultAsync(m => m.CategoryId == id);
+                            .Include(c=> c.Devices)
+                            .FirstOrDefaultAsync(m => m.CategoryId == id);
             if (category == null)
             {
                 return NotFound();
@@ -141,7 +150,9 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
+            var category = await _context.Categories
+                            .Include(c => c.Devices)
+                            .SingleAsync(c => c.CategoryId == id);
             _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
