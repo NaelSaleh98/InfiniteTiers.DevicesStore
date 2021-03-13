@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using InfiniteTiers.DevicesStore.Data.DAL;
 using InfiniteTiers.DevicesStore.Data.Models;
 using Microsoft.AspNetCore.Authorization;
+using InfiniteTiers.DevicesStore.Presentation.Data;
 
 namespace InfiniteTiers.DevicesStore.Presentation.Controllers
 {
@@ -15,9 +15,9 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
 
     public class CategoriesController : Controller
     {
-        private readonly ItgContext _context;
+        private readonly AuthDbContext _context;
 
-        public CategoriesController(ItgContext context)
+        public CategoriesController(AuthDbContext context)
         {
             _context = context;
         }

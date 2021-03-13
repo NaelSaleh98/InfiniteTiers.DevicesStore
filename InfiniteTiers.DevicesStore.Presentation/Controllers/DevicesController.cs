@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using InfiniteTiers.DevicesStore.Data.DAL;
 using InfiniteTiers.DevicesStore.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using InfiniteTiers.DevicesStore.Presentation.Data;
@@ -15,12 +14,10 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
     [Authorize(Roles ="Admin")]
     public class DevicesController : Controller
     {
-        private readonly ItgContext _context;
-        private readonly AuthDbContext _contextAuth;
-        public DevicesController(ItgContext context, AuthDbContext contextauth)
+        private readonly AuthDbContext _context;
+        public DevicesController(AuthDbContext context)
         {
             _context = context;
-            _contextAuth = contextauth;
         }
 
         // GET: Devices
@@ -49,7 +46,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 return NotFound();
             }
 
-            var user = _contextAuth.Users.FirstOrDefaultAsync(u => u.Id == device.ApplicationUserId);
+            var user = _context.Users.FirstOrDefaultAsync(u => u.Id == device.ApplicationUserId);
             ViewData["User"] = user.Result.UserName;
 
             return View(device);
@@ -71,8 +68,8 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         {
             if (ModelState.IsValid)
             {
-                var role = _contextAuth.Roles.FirstOrDefaultAsync(r => r.Name == "Operation Manager");
-                var roleUser = _contextAuth.UserRoles.FirstOrDefaultAsync(ur => ur.RoleId == role.Result.Id);
+                var role = _context.Roles.FirstOrDefaultAsync(r => r.Name == "Operation Manager");
+                var roleUser = _context.UserRoles.FirstOrDefaultAsync(ur => ur.RoleId == role.Result.Id);
                 device.ApplicationUserId = roleUser.Result.UserId;
                 device.IsActive = false;
                 _context.Add(device);

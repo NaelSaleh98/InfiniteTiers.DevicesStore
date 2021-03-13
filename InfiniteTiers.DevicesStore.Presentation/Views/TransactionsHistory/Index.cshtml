@@ -1,0 +1,58 @@
+﻿@model IEnumerable<InfiniteTiers.DevicesStore.Presentation.Areas.Identity.Data.UserDevice>
+
+
+@{
+    ViewData["Title"] = "History";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="text-center text-primary">Transactions History</h1>
+
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.TransactionDate)
+            </th>
+            <th>
+                From
+            </th>
+            <th>
+                To
+            </th>
+            <th>
+                Device
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TransactionDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FromUser.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ToUser.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Device.Name)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<style>
+    td, th {
+        text-align: center;
+    }
+
+    a:hover {
+        text-decoration: none;
+    }
+</style>
+

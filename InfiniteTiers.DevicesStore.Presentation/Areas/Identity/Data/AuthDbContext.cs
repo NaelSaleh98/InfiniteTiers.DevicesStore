@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using InfiniteTiers.DevicesStore.Data.Models;
 using InfiniteTiers.DevicesStore.Presentation.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -14,6 +15,9 @@ namespace InfiniteTiers.DevicesStore.Presentation.Data
     {
         public AuthDbContext(DbContextOptions<AuthDbContext> options): base(options){}
 
+        public DbSet<Category> Categories { get; set; }
+
+        public DbSet<Device> Devices { get; set; }
         public DbSet<UserDevice> UserDevices { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)

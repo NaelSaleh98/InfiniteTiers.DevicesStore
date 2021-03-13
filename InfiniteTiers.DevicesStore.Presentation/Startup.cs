@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using InfiniteTiers.DevicesStore.Data.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 
@@ -28,9 +27,6 @@ namespace InfiniteTiers.DevicesStore.Presentation
         {
             services.AddControllersWithViews();
             services.AddRazorPages();
-
-            services.AddDbContext<ItgContext>(options =>
-              options.UseSqlServer(Configuration.GetConnectionString("ItgContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
