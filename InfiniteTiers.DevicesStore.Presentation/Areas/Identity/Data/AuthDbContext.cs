@@ -6,15 +6,15 @@ using InfiniteTiers.DevicesStore.Presentation.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace InfiniteTiers.DevicesStore.Presentation.Data
 {
     public class AuthDbContext : IdentityDbContext<ApplicationUser>
     {
-        public AuthDbContext(DbContextOptions<AuthDbContext> options)
-            : base(options)
-        {
-        }
+        public AuthDbContext(DbContextOptions<AuthDbContext> options): base(options){}
+
+        public DbSet<UserDevice> UserDevices { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

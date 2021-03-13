@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace InfiniteTiers.DevicesStore.Presentation.Migrations
 {
-    public partial class addCustomUser : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -178,7 +178,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Migrations
                     SerialNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PurchaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    CategoryId = table.Column<int>(type: "int", nullable: true),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
                     ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
@@ -195,6 +195,40 @@ namespace InfiniteTiers.DevicesStore.Presentation.Migrations
                         column: x => x.CategoryId,
                         principalTable: "Category",
                         principalColumn: "CategoryId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserDevices",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TransactionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    FromUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ToUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    DeviceId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserDevices", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserDevices_AspNetUsers_FromUserId",
+                        column: x => x.FromUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UserDevices_AspNetUsers_ToUserId",
+                        column: x => x.ToUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UserDevices_Device_DeviceId",
+                        column: x => x.DeviceId,
+                        principalTable: "Device",
+                        principalColumn: "DeviceId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -246,6 +280,21 @@ namespace InfiniteTiers.DevicesStore.Presentation.Migrations
                 name: "IX_Device_CategoryId",
                 table: "Device",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserDevices_DeviceId",
+                table: "UserDevices",
+                column: "DeviceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserDevices_FromUserId",
+                table: "UserDevices",
+                column: "FromUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserDevices_ToUserId",
+                table: "UserDevices",
+                column: "ToUserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -266,10 +315,13 @@ namespace InfiniteTiers.DevicesStore.Presentation.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Device");
+                name: "UserDevices");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Device");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

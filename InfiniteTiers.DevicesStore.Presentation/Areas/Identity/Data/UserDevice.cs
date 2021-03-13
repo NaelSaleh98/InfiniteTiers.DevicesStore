@@ -13,13 +13,12 @@ namespace InfiniteTiers.DevicesStore.Presentation.Areas.Identity.Data
 
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime StartTime { get; set; }
+        public DateTime TransactionDate { get; set; }
 
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime EndTime { get; set; }
+        public ApplicationUser FromUser { get; set; }
 
-        public ApplicationUser User { get; set; }
+        public ApplicationUser ToUser { get; set; }
+
         public Device Device { get; set; }
     }
 }
