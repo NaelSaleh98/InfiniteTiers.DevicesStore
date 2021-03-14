@@ -26,12 +26,17 @@
             <th>
                 Status
             </th>
-            <th>
-                <a asp-action="Create" class="text-decoration-none">
-                    <i class="fas fa-plus"></i>
-                    NEW!
-                </a>
-            </th>
+            @if (User.IsInRole("Admin") || User.IsInRole("OperationManager"))
+            {
+                <th>
+
+                    <a asp-action="Create" class="text-decoration-none">
+                        <i class="fas fa-plus"></i>
+                        NEW!
+                    </a>
+
+                </th>
+            }
         </tr>
     </thead>
     <tbody>
@@ -64,17 +69,28 @@
                         </div>
                     }
                 </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.DeviceId" style="padding: 0px 5px; margin:0px 3px">
-                        <i class="fas fa-edit"></i>
-                    </a>
-                    <a asp-action="Details" asp-route-id="@item.DeviceId" style="padding: 0px 5px; margin:0px 3px">
-                        <i class="fas fa-info"></i>
-                    </a>
-                    <a asp-action="Delete" asp-route-id="@item.DeviceId" style="padding: 0px 5px; margin:0px 3px">
-                        <i class="far fa-trash-alt"></i>
-                    </a>
-                </td>
+                @if (User.IsInRole("Admin") || User.IsInRole("OperationManager"))
+                {
+                    <td>
+
+                        <a asp-action="Details" asp-route-id="@item.DeviceId" style="padding: 0px 5px; margin:0px 3px">
+                            <i class="fas fa-info"></i>
+                        </a>
+
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.DeviceId" style="padding: 0px 5px; margin:0px 3px">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.DeviceId" style="padding: 0px 5px; margin:0px 3px">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+
+                        }
+                    </td>
+                }
+
             </tr>
         }
     </tbody>

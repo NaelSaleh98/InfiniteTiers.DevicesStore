@@ -11,7 +11,7 @@ using InfiniteTiers.DevicesStore.Presentation.Data;
 
 namespace InfiniteTiers.DevicesStore.Presentation.Controllers
 {
-    [Authorize(Roles ="Admin")]
+    [Authorize]
     public class DevicesController : Controller
     {
         private readonly AuthDbContext _context;
@@ -29,6 +29,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             return View(await devices.ToListAsync());
         }
 
+        [Authorize(Roles = "Admin,OperationManager")]
         // GET: Devices/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -52,6 +53,8 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             return View(device);
         }
 
+        [Authorize(Roles = "Admin,OperationManager")]
+
         // GET: Devices/Create
         public IActionResult Create()
         {
@@ -62,6 +65,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         // POST: Devices/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin,OperationManager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Description,Manufacturer,Model,SerialNumber,PurchaseDate,CategoryId")] Device device)
@@ -80,6 +84,8 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             PopulateCategoriesDropDownList(device.CategoryId);
             return View(device);
         }
+
+        [Authorize(Roles = "Admin")]
 
         // GET: Devices/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -103,6 +109,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         // POST: Devices/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditPost(int? id)
@@ -136,6 +143,8 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             return View(deviceToUpdate);
         }
 
+        [Authorize(Roles = "Admin")]
+
         // GET: Devices/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -156,7 +165,10 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             return View(device);
         }
 
+
+
         // POST: Devices/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
