@@ -19,16 +19,40 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             _context = context;
         }
 
-        // GET: History
+        // GET: Devices
         public async Task<IActionResult> Index()
         {
-            var history = _context.UserDevices
-                        .Include(us => us.FromUser)
-                        .Include(us => us.ToUser)
-                        .Include(us => us.Device)
-                        .OrderBy(us => us.TransactionDate);
+            var devices = _context.Devices
+                        .Include(d => d.Category)
+                        .OrderBy(d => d.IsActive);
 
-            return View(await history.ToListAsync());
+            return View(await devices.ToListAsync());
         }
+
+        // GET: History
+        public IActionResult History(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var history = from h in _context.UserDevices
+                          .Include(us => us.FromUser)
+                          .Include(us => us.ToUser)
+                          .OrderByDescending(us => us.TransactionDate)
+                          where h.Device.DeviceId == id
+                          select h;
+
+            if (history == null)
+            {
+                return NotFound();
+            }
+            var device = _context.Devices.FirstOrDefaultAsync(u => u.DeviceId == id);
+            ViewData["Device"] = device.Result.Name;
+
+            return View(history);
+        }
+
     }
 }
