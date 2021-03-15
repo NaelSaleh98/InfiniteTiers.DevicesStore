@@ -8,6 +8,16 @@
 <h1 class="text-center text-primary">All Devices</h1>
 
 
+<form action="/Devices" method="post" class="form-inline">
+    <div class="form-group mb-2">
+        <label for="SearchString">Find by name:</label>
+    </div>
+    <div class="form-group mx-sm-3 mb-2">
+        <input class="form-control" name="SearchString" id="SearchString" type="text" />
+    </div>
+    <button type="submit" class="btn btn-primary mb-2">Search</button>
+</form>
+
 <table class="table table-hover">
     <thead>
         <tr>

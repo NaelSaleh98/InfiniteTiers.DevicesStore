@@ -21,11 +21,15 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         }
 
         // GET: Devices
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
             var devices = _context.Devices
                         .Include(d => d.Category)
                         .OrderBy(d => d.IsActive);
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                devices = (IOrderedQueryable<Device>)devices.Where(d => d.Name.Contains(searchString));
+            }
             return View(await devices.ToListAsync());
         }
 
