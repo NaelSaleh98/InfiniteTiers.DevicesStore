@@ -51,9 +51,6 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 return NotFound();
             }
 
-            var user = _context.Users.FirstOrDefaultAsync(u => u.Id == device.ApplicationUserId);
-            ViewData["User"] = user.Result.UserName;
-
             return View(device);
         }
 
@@ -74,12 +71,15 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Description,Manufacturer,Model,SerialNumber,PurchaseDate,CategoryId")] Device device)
         {
+
             if (ModelState.IsValid)
             {
-                var role = _context.Roles.FirstOrDefaultAsync(r => r.Name == "Operation Manager");
+                var role = _context.Roles.FirstOrDefaultAsync(r => r.Name == "OperationManager");
                 var roleUser = _context.UserRoles.FirstOrDefaultAsync(ur => ur.RoleId == role.Result.Id);
-                device.ApplicationUserId = roleUser.Result.UserId;
+                var user = _context.Users.FirstOrDefaultAsync(u => u.Id == roleUser.Result.UserId);
+                device.ApplicationUserId = user.Result.Id;
                 device.IsActive = false;
+                device.OwnedBy = user.Result.UserName;
                 _context.Add(device);
 
                 await _context.SaveChangesAsync();
