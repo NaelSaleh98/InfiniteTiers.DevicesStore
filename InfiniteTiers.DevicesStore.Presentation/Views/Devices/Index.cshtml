@@ -1,5 +1,11 @@
 ﻿@model IEnumerable<InfiniteTiers.DevicesStore.Data.Models.Device>
 
+@using Microsoft.AspNetCore.Identity
+@using InfiniteTiers.DevicesStore.Presentation.Areas.Identity.Data
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
 @{
     ViewData["Title"] = "Devices";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -30,17 +36,18 @@
             <th>
                 Status
             </th>
-            @if (User.IsInRole("Admin") || User.IsInRole("OperationManager"))
-            {
-                <th>
+            <th>
+                @if (User.IsInRole("Admin") || User.IsInRole("OperationManager"))
+                {
 
                     <a asp-action="Create" class="text-decoration-none">
                         <i class="fas fa-plus"></i>
                         NEW!
                     </a>
 
-                </th>
-            }
+                }
+            </th>
+
         </tr>
     </thead>
     <tbody>
@@ -67,9 +74,30 @@
                         </div>
                     }
                 </td>
-                @if (User.IsInRole("Admin") || User.IsInRole("OperationManager"))
-                {
-                    <td>
+
+                <td>
+
+                    @if (User.IsInRole("User") || User.IsInRole("OperationManager"))
+                    {
+                        @if (item.OwnedBy != UserManager.GetUserName(User))
+                        {
+                            <a asp-action="Request" asp-route-id="@item.DeviceId" class="btn btn-success"
+                               asp-route-userName="@UserManager.GetUserName(User)" style="padding: 0px 5px; margin:0px 3px">
+                                Request
+                            </a>
+                        }
+                        else if (item.OwnedBy == UserManager.GetUserName(User))
+                        {
+                            <a asp-action="Release" asp-route-id="@item.DeviceId" title="Release"
+                               class="btn btn-secondary" style="padding: 0px 5px; margin:0px 3px">
+                                Release
+                            </a>
+                        }
+
+                    }
+
+                    @if (User.IsInRole("Admin") || User.IsInRole("OperationManager"))
+                    {
 
                         <a asp-action="Details" asp-route-id="@item.DeviceId" style="padding: 0px 5px; margin:0px 3px">
                             <i class="fas fa-info"></i>
@@ -86,8 +114,10 @@
                             </a>
 
                         }
-                    </td>
-                }
+                    }
+
+
+                </td>
 
             </tr>
         }
