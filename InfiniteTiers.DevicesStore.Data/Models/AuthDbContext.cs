@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using InfiniteTiers.DevicesStore.Data.Models;
-using InfiniteTiers.DevicesStore.Presentation.Areas.Identity.Data;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace InfiniteTiers.DevicesStore.Presentation.Data
+
+namespace InfiniteTiers.DevicesStore.Data.Models
 {
     public class AuthDbContext : IdentityDbContext<ApplicationUser>
     {
