@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using InfiniteTiers.DevicesStore.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using InfiniteTiers.DevicesStore.Presentation.Data;
+using InfiniteTiers.DevicesStore.Presentation.Services;
+using InfiniteTiers.DevicesStore.Presentation.Models;
+using InfiniteTiers.DevicesStore.Presentation.Areas.Identity.Data;
 
 namespace InfiniteTiers.DevicesStore.Presentation.Controllers
 {
@@ -15,9 +18,13 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
     public class DevicesController : Controller
     {
         private readonly AuthDbContext _context;
-        public DevicesController(AuthDbContext context)
+        private readonly IMailService _mailService;
+
+
+        public DevicesController(AuthDbContext context, IMailService mailService)
         {
             _context = context;
+            _mailService = mailService;
         }
 
         // GET: Devices
@@ -180,6 +187,137 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             var device = await _context.Devices.FindAsync(id);
             _context.Devices.Remove(device);
             await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = "User,OperationManager")]
+        // GET: Devices/request/5?userId=12
+        public new async Task<IActionResult> Request(int? id, string userId)
+        {
+            if ( (id == null) || (userId ==null) )
+            {
+                return NotFound();
+            }
+
+            var device = await _context.Devices.FirstAsync(m => m.DeviceId == id);
+            var ownedBy = await _context.Users.FirstAsync(ob => ob.Id == device.ApplicationUserId);
+            var requester = await _context.Users.FirstAsync(r => r.Id == userId);
+
+            if ( (device == null) || (ownedBy == null) || (requester == null) )
+            {
+                return NotFound();
+            }
+
+            MailRequest request = new MailRequest { To = "naels141@gmail.com", Subject = "Deivce Request"};
+            request.PrepeareDeviceRequestBody(device, requester);
+            await _mailService.SendEmailAsync(request);
+
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = "User,OperationManager")]
+        // GET: Devices/Accept/5?userId=12
+        public  async Task<IActionResult> Accept(int? id, string userId)
+        {
+            if ((id == null) || (userId == null))
+            {
+                return NotFound();
+            }
+
+            var device = await _context.Devices.FirstAsync(m => m.DeviceId == id);
+            var ownedBy = await _context.Users.FirstAsync(ob => ob.Id == device.ApplicationUserId);
+            var requester = await _context.Users.FirstAsync(r => r.Id == userId);
+
+
+
+            if ((device == null) || (ownedBy == null) || (requester == null))
+            {
+                return NotFound();
+            }
+
+
+            device.ApplicationUserId = requester.Id;
+            device.OwnedBy = requester.UserName;
+            if (device.OwnedBy != "OperationManager")
+            {
+                device.IsActive = true;
+            }
+            else
+            {
+                device.IsActive = false;
+            }
+
+            await _context.SaveChangesAsync();
+
+            MailRequest request = new MailRequest { To = "naels141@gmail.com", Subject = "Deivce Request Accepted" };
+            request.PrepeareDeviceRequestAcceptBody(device);
+            await _mailService.SendEmailAsync(request);
+
+            UserDevice userDevice = new UserDevice { Device = device, FromUser = ownedBy, ToUser = requester, TransactionDate = DateTime.Now };
+            _context.UserDevices.Add(userDevice);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = "User,OperationManager")]
+        // GET: Devices/Accept/5?userId=12
+        public async Task<IActionResult> Deny(int? id, string userId)
+        {
+            if ((id == null) || (userId == null))
+            {
+                return NotFound();
+            }
+
+            var device = await _context.Devices.FirstAsync(m => m.DeviceId == id);
+            var ownedBy = await _context.Users.FirstAsync(ob => ob.Id == device.ApplicationUserId);
+            var requester = await _context.Users.FirstAsync(r => r.Id == userId);
+
+
+            if ((device == null) || (ownedBy == null) || (requester == null))
+            {
+                return NotFound();
+            }
+
+            MailRequest request = new MailRequest { To = "naels141@gmail.com", Subject = "Deivce Request Denied" };
+            request.PrepeareDeviceRequestDenyBody(device, ownedBy);
+            await _mailService.SendEmailAsync(request);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = "User,OperationManager")]
+        // GET: Devices/request/5?userId=12
+        public async Task<IActionResult> Release(int? id)
+        {
+            if ((id == null))
+            {
+                return NotFound();
+            }
+
+            var device = await _context.Devices.FirstAsync(m => m.DeviceId == id);
+            var ownedBy = await _context.Users.FirstAsync(ob => ob.Id == device.ApplicationUserId);
+
+            if (ownedBy.UserName == "OperationManager")
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var role = _context.Roles.FirstOrDefaultAsync(r => r.Name == "OperationManager");
+            var roleUser = _context.UserRoles.FirstOrDefaultAsync(ur => ur.RoleId == role.Result.Id);
+            var user = _context.Users.FirstOrDefaultAsync(u => u.Id == roleUser.Result.UserId);
+
+            device.OwnedBy = user.Result.UserName;
+            device.ApplicationUserId = user.Result.Id;
+            device.IsActive = false;
+            await _context.SaveChangesAsync();
+
+            if ((device == null) || (ownedBy == null))
+            {
+                return NotFound();
+            }
+
             return RedirectToAction(nameof(Index));
         }
 

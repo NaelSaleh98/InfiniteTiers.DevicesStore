@@ -13,7 +13,6 @@
 
 <h1 class="text-center text-primary">All Devices</h1>
 
-
 <form action="/Devices" method="post" class="form-inline">
     <div class="form-group mb-2">
         <label for="SearchString">Find by name:</label>
@@ -82,7 +81,7 @@
                         @if (item.OwnedBy != UserManager.GetUserName(User))
                         {
                             <a asp-action="Request" asp-route-id="@item.DeviceId" class="btn btn-success"
-                               asp-route-userName="@UserManager.GetUserName(User)" style="padding: 0px 5px; margin:0px 3px">
+                               asp-route-userId="@UserManager.GetUserId(User)" style="padding: 0px 5px; margin:0px 3px">
                                 Request
                             </a>
                         }
