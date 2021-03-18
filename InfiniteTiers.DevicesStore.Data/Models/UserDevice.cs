@@ -9,7 +9,6 @@ namespace InfiniteTiers.DevicesStore.Data.Models
         public int Id { get; set; }
 
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime TransactionDate { get; set; }
 
         public ApplicationUser FromUser { get; set; }
