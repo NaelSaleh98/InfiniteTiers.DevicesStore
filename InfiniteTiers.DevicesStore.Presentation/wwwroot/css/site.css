@@ -92,3 +92,7 @@ div.card-content{
 div.login-form-icon{
     text-align: center;
 }
+
+button:focus{
+    outline:none;
+}

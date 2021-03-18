@@ -4,19 +4,15 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
-<ul class="navbar-nav">
-    @if (SignInManager.IsSignedIn(User))
-    {
-        <li class="nav-item">
-            <a id="manage" class="nav-link btn-link text-primary" asp-area="Identity" asp-page="/Account/Manage/Index" title="profile"><i class="fas fa-user-circle fa-2x"></i></a>
-        </li>
-        <li class="nav-item">
-            <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                <button id="logout" type="submit" class="nav-link btn btn-link text-primary" title="logout">
-                    <i class="fas fa-sign-out-alt fa-2x"></i>
-                </button>
-            </form>
-        </li>
-    }
+@if (SignInManager.IsSignedIn(User))
+{
+    <a id="manage" class="dropdown-item text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="profile">
+        Profile
+    </a>
+    <form id="logoutForm" class="dropdown-item form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+        <button id="logout" type="submit" class="text-dark border-0 bg-transparent" title="logout">
+            Logout
+        </button>
+    </form>
+}
 
-</ul>

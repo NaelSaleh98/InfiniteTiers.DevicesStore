@@ -17,35 +17,45 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-md navbar-dark bg-dark  border-bottom box-shadow mb-3">
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index" style="font-size:xx-large">ITG Device Store</a>
+        <nav class="navbar navbar-expand-md navbar-light bg-primary border-bottom box-shadow mb-3">
+            <button class="navbar-toggler bg-primary btn-primary" type="button" data-toggle="collapse" data-target="#navbarTabs" aria-controls="navbarTabs" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarTabs">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index" style="font-size:xx-large">ITG Device Store</a>
 
-            <ul class="navbar-nav mr-auto">
-                @if (SignInManager.IsSignedIn(User))
-                {
-                    <li class="nav-item">
-                        <a class="nav-link text-primary" asp-area="" asp-controller="Devices" asp-action="Index" style="font-size:x-large">Devices</a>
-                    </li>
-
-                    @if (User.IsInRole("Admin"))
+                <ul class="navbar-nav mr-auto">
+                    @if (SignInManager.IsSignedIn(User))
                     {
                         <li class="nav-item">
-                            <a class="nav-link text-primary" asp-area="" asp-controller="Categories" asp-action="Index" style="font-size:x-large">Categories</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Devices" asp-action="Index" style="font-size:x-large">Devices</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-primary" asp-area="" asp-controller="TransactionsHistory" asp-action="Index" style="font-size:x-large">History</a>
-                        </li>
-                        @*<a class="navbar-brand" asp-area="" asp-controller="Users" asp-action="Index">Users</a>*@
-                        @*<a class="navbar-brand" asp-area="" asp-controller="UserDevices" asp-action="Index">User Devices History</a>*@
-                    }
-                }
-            </ul>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="Categories" asp-action="Index" style="font-size:x-large">Categories</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="TransactionsHistory" asp-action="Index" style="font-size:x-large">History</a>
+                            </li>
 
-            <div class="d-sm-inline-flex justify-content-between">
-                <partial name="_LoginPartial.cshtml" />
+                        }
+                    }
+                </ul>
+
+                <div class="dropdown">
+                    <a class="nav-link dropdown-toggle text-light" href="#" id="settings" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-cog fa-2x"></i>
+                    </a>
+                    <div class="dropdown-menu bg-primary" aria-labelledby="settings">
+                        <partial name="_LoginPartial.cshtml" />
+                    </div>
+                </div>
             </div>
+
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
