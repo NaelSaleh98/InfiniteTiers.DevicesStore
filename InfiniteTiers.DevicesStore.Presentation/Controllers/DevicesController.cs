@@ -16,21 +16,22 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
     [Authorize]
     public class DevicesController : Controller
     {
-        private readonly AuthDbContext _context;
         private readonly IMailService _mailService;
         private readonly IDeviceRepository _deviceRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IDeviceHistoryRepository _historyRepository;
 
-        public DevicesController(AuthDbContext context, IMailService mailService,
-                                IDeviceRepository deviceRepository, ICategoryRepository categoryRepository,
-                                IUserRepository userRepository)
+        public DevicesController(IMailService mailService, IDeviceRepository deviceRepository,
+                                 ICategoryRepository categoryRepository, IUserRepository userRepository,
+                                 IDeviceHistoryRepository historyRepository)
         {
-            _context = context;
             _mailService = mailService;
             _deviceRepository = deviceRepository;
             _categoryRepository = categoryRepository;
             _userRepository = userRepository;
+            _historyRepository = historyRepository;
+
         }
 
         // GET: Devices
@@ -246,8 +247,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             await _mailService.SendEmailAsync(request);
 
             UserDevice userDevice = new UserDevice { Device = device, FromUser = ownedBy, ToUser = requester, TransactionDate = DateTime.Now };
-            _context.UserDevices.Add(userDevice);
-            await _context.SaveChangesAsync();
+            _historyRepository.SaveDeviceHistory(userDevice);
 
             return RedirectToAction(nameof(Index));
         }
@@ -304,10 +304,8 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
 
             _deviceRepository.UpdateDevice(device);
 
-            if ((device == null) || (ownedBy == null))
-            {
-                return NotFound();
-            }
+            UserDevice userDevice = new UserDevice { Device = device, FromUser = ownedBy, ToUser = user, TransactionDate = DateTime.Now };
+            _historyRepository.SaveDeviceHistory(userDevice);
 
             return RedirectToAction(nameof(Index));
         }

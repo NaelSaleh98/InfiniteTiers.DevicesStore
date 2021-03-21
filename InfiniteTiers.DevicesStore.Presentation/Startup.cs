@@ -35,7 +35,7 @@ namespace InfiniteTiers.DevicesStore.Presentation
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IDeviceRepository, DeviceRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
-
+            services.AddScoped<IDeviceHistoryRepository, DeviceHistoryRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
