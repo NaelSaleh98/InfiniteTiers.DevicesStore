@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using InfiniteTiers.DevicesStore.Presentation.Settings;
 using InfiniteTiers.DevicesStore.Presentation.Services;
+using InfiniteTiers.DevicesStore.Logic.Repositories;
 
 namespace InfiniteTiers.DevicesStore.Presentation
 {
@@ -31,6 +32,7 @@ namespace InfiniteTiers.DevicesStore.Presentation
             services.AddRazorPages();
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
             services.AddTransient<IMailService, Services.MailService>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
 
         }
 

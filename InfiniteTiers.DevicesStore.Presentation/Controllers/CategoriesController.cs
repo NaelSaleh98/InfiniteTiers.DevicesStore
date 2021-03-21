@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using InfiniteTiers.DevicesStore.Data.Models;
 using Microsoft.AspNetCore.Authorization;
+using InfiniteTiers.DevicesStore.Logic.Repositories;
 
 namespace InfiniteTiers.DevicesStore.Presentation.Controllers
 {
@@ -11,34 +12,29 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
 
     public class CategoriesController : Controller
     {
-        private readonly AuthDbContext _context;
+        private readonly ICategoryRepository _categoryRepository;
 
-        public CategoriesController(AuthDbContext context)
+        public CategoriesController(ICategoryRepository categoryRepository)
         {
-            _context = context;
+            _categoryRepository = categoryRepository;
         }
 
         // GET: Categories
-        public async Task<IActionResult> Index()
+        public  IActionResult Index()
         {
-            var categories = _context.Categories
-                            .Include(c => c.Devices)
-                            .OrderBy(c => c.Name);
-            return View(await categories.ToListAsync());
+            var categories = _categoryRepository.GetAll();
+            return View(categories);
         }
 
         // GET: Categories/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public  IActionResult Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var category = await _context.Categories
-                .Include(c => c.Devices)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(m => m.CategoryId == id);
+            var category = _categoryRepository.GetCategory(id);
             if (category == null)
             {
                 return NotFound();
@@ -58,28 +54,25 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name")] Category category)
+        public IActionResult Create([Bind("Name")] Category category)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(category);
-                await _context.SaveChangesAsync();
+                _categoryRepository.SaveCategory(category);
                 return RedirectToAction(nameof(Index));
             }
             return View(category);
         }
 
         // GET: Categories/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var category = await _context.Categories
-                            .AsNoTracking()
-                            .FirstOrDefaultAsync(d => d.CategoryId == id);
+            var category = _categoryRepository.GetCategory(id);
             if (category == null)
             {
                 return NotFound();
@@ -92,7 +85,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CategoryId,Name")] Category category)
+        public IActionResult Edit(int id, [Bind("CategoryId,Name")] Category category)
         {
             if (id != category.CategoryId)
             {
@@ -103,8 +96,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             {
                 try
                 {
-                    _context.Update(category);
-                    await _context.SaveChangesAsync();
+                    _categoryRepository.UpdateCategory(category);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -123,16 +115,15 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         }
 
         // GET: Categories/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var category = await _context.Categories
-                            .Include(c=> c.Devices)
-                            .FirstOrDefaultAsync(m => m.CategoryId == id);
+            var category = _categoryRepository.GetCategory(id);
+
             if (category == null)
             {
                 return NotFound();
@@ -144,19 +135,15 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         // POST: Categories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            var category = await _context.Categories
-                            .Include(c => c.Devices)
-                            .SingleAsync(c => c.CategoryId == id);
-            _context.Categories.Remove(category);
-            await _context.SaveChangesAsync();
+            _categoryRepository.DeleteCategory(id);
             return RedirectToAction(nameof(Index));
         }
 
         private bool CategoryExists(int id)
         {
-            return _context.Categories.Any(e => e.CategoryId == id);
+            return _categoryRepository.CategoryExists(id);
         }
     }
 }

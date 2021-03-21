@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\InfiniteTiers.DevicesStore.Data\InfiniteTiers.DevicesStore.Data.csproj" />
+    <ProjectReference Include="..\InfiniteTiers.DevicesStore.Logic\InfiniteTiers.DevicesStore.Logic.csproj" />
   </ItemGroup>
 
 </Project>
