@@ -1,4 +1,5 @@
 ﻿using InfiniteTiers.DevicesStore.Data.Models;
+using InfiniteTiers.DevicesStore.Logic.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,21 +11,21 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
     [Authorize(Roles = "Admin")]
     public class TransactionsHistoryController : Controller
     {
-        private readonly AuthDbContext _context;
+        private readonly IDeviceRepository _deviceRepository;
+        private readonly IDeviceHistoryRepository _historyRepository;
 
-        public TransactionsHistoryController(AuthDbContext context)
+        public TransactionsHistoryController(IDeviceRepository deviceRepository,IDeviceHistoryRepository historyRepository)
         {
-            _context = context;
+            _deviceRepository = deviceRepository;
+            _historyRepository = historyRepository;
         }
 
         // GET: Devices
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var devices = _context.Devices
-                        .Include(d => d.Category)
-                        .OrderBy(d => d.IsActive);
+            var devices = _deviceRepository.GetDevices();
 
-            return View(await devices.ToListAsync());
+            return View(devices.ToList());
         }
 
         // GET: History
@@ -35,19 +36,14 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 return NotFound();
             }
 
-            var history = from h in _context.UserDevices
-                          .Include(us => us.FromUser)
-                          .Include(us => us.ToUser)
-                          .OrderByDescending(us => us.TransactionDate)
-                          where h.Device.DeviceId == id
-                          select h;
+            var history = _historyRepository.GetDeviceHistory(id);
 
             if (history == null)
             {
                 return NotFound();
             }
-            var device = _context.Devices.FirstOrDefaultAsync(u => u.DeviceId == id);
-            ViewData["Device"] = device.Result.Name;
+            var device = _deviceRepository.GetDevice(id);
+            ViewData["Device"] = device.Name;
 
             return View(history);
         }

@@ -10,5 +10,7 @@ namespace InfiniteTiers.DevicesStore.Logic.Repositories
     public interface IDeviceHistoryRepository
     {
         public void SaveDeviceHistory(UserDevice userDevice);
+
+        public IEnumerable<UserDevice> GetDeviceHistory(int? deviceId);
     }
 }
