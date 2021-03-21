@@ -33,6 +33,8 @@ namespace InfiniteTiers.DevicesStore.Presentation
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
             services.AddTransient<IMailService, Services.MailService>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IDeviceRepository, DeviceRepository>();
+
 
         }
 

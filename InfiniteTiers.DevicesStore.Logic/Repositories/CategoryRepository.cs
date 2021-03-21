@@ -1,10 +1,7 @@
 ﻿using InfiniteTiers.DevicesStore.Data.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InfiniteTiers.DevicesStore.Logic.Repositories
 {
@@ -17,7 +14,7 @@ namespace InfiniteTiers.DevicesStore.Logic.Repositories
             _context = context;
         }
 
-        public List<Category> GetAll()
+        public IEnumerable<Category> GetAll()
         {
             var categories = _context.Categories
                             .Include(c => c.Devices)

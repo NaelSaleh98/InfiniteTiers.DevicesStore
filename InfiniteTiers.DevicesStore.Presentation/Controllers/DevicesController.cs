@@ -8,6 +8,8 @@ using InfiniteTiers.DevicesStore.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using InfiniteTiers.DevicesStore.Presentation.Services;
 using InfiniteTiers.DevicesStore.Presentation.Models;
+using InfiniteTiers.DevicesStore.Logic.Repositories;
+using System.Collections.Generic;
 
 namespace InfiniteTiers.DevicesStore.Presentation.Controllers
 {
@@ -16,42 +18,39 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
     {
         private readonly AuthDbContext _context;
         private readonly IMailService _mailService;
+        private readonly IDeviceRepository _deviceRepository;
+        private readonly ICategoryRepository _categoryRepository;
 
-
-        public DevicesController(AuthDbContext context, IMailService mailService)
+        public DevicesController(AuthDbContext context, IMailService mailService,
+                                IDeviceRepository deviceRepository, ICategoryRepository categoryRepository)
         {
             _context = context;
             _mailService = mailService;
+            _deviceRepository = deviceRepository;
+            _categoryRepository = categoryRepository;
         }
 
         // GET: Devices
-        public async Task<IActionResult> Index(string searchString)
+        public IActionResult Index(string searchString)
         {
-            var devices = _context.Devices
-                        .Include(d => d.Category)
-                        .Include(d => d.OwnedBy)
-                        .OrderBy(d => d.IsActive);
+            var devices = _deviceRepository.GetDevices();
             if (!String.IsNullOrEmpty(searchString))
             {
-                devices = (IOrderedQueryable<Device>)devices.Where(d => d.Name.Contains(searchString));
+                devices = devices.Where(d => d.Name.Contains(searchString));
             }
-            return View(await devices.ToListAsync());
+            return View(devices.ToList());
         }
 
         [Authorize(Roles = "Admin,OperationManager")]
         // GET: Devices/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var device = await _context.Devices
-                .Include(d => d.Category)
-                .Include(d => d.OwnedBy)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(m => m.DeviceId == id);
+            var device = _deviceRepository.GetDevice(id);
             if (device == null)
             {
                 return NotFound();
@@ -75,7 +74,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         [Authorize(Roles = "Admin,OperationManager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description,Manufacturer,Model,SerialNumber,PurchaseDate,CategoryId")] Device device)
+        public IActionResult Create([Bind("Name,Description,Manufacturer,Model,SerialNumber,PurchaseDate,CategoryId")] Device device)
         {
 
             if (ModelState.IsValid)
@@ -85,9 +84,8 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 var user = _context.Users.FirstOrDefaultAsync(u => u.Id == roleUser.Result.UserId);
                 device.ApplicationUserId = user.Result.Id;
                 device.IsActive = false;
-                _context.Add(device);
 
-                await _context.SaveChangesAsync();
+                _deviceRepository.SaveDevice(device);
                 return RedirectToAction(nameof(Index));
             }
             PopulateCategoriesDropDownList(device.CategoryId);
@@ -97,16 +95,15 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         [Authorize(Roles = "Admin")]
 
         // GET: Devices/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var device = await _context.Devices
-                                 .AsNoTracking()
-                                .FirstOrDefaultAsync(d => d.DeviceId == id);
+            var device = _deviceRepository.GetDevice(id);
+
             if (device == null)
             {
                 return NotFound();
@@ -121,51 +118,48 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditPost(int? id)
+        public IActionResult EditPost(int id, [Bind("DeviceId,Name,Description,Manufacturer,Model,SerialNumber,PurchaseDate,IsActive,CategoryId,ApplicationUserId")] Device device)
         {
-            if (id == null)
+            if (id != device.DeviceId)
             {
                 return NotFound();
             }
 
-            var deviceToUpdate = await _context.Devices
-                                .FirstOrDefaultAsync(d => d.DeviceId == id);
-
-            if (await TryUpdateModelAsync<Device>(deviceToUpdate, "",
-                d => d.Name, d => d.Description, d => d.Manufacturer,
-                d => d.Model, d => d.SerialNumber, d => d.PurchaseDate,
-                d => d.IsActive, d => d.CategoryId))
+            if (ModelState.IsValid)
             {
                 try
                 {
-                    await _context.SaveChangesAsync();
+                    _deviceRepository.UpdateDevice(device);
                 }
-                catch (DbUpdateException)
+                catch (DbUpdateConcurrencyException)
                 {
-                    ModelState.AddModelError("", "Unable to save changes. " +
-                        "Try again, and if the problem persists, " +
-                        "see your system administrator.");
+                    if (!DeviceExists(device.DeviceId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
                 return RedirectToAction(nameof(Index));
             }
-            PopulateCategoriesDropDownList(deviceToUpdate.CategoryId);
-            return View(deviceToUpdate);
+
+            PopulateCategoriesDropDownList(device.CategoryId);
+            return View(device);
         }
 
         [Authorize(Roles = "Admin")]
 
         // GET: Devices/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var device = await _context.Devices
-                .Include(d => d.Category)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(m => m.DeviceId == id);
+            var device = _deviceRepository.GetDevice(id);
             if (device == null)
             {
                 return NotFound();
@@ -180,11 +174,9 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            var device = await _context.Devices.FindAsync(id);
-            _context.Devices.Remove(device);
-            await _context.SaveChangesAsync();
+            _deviceRepository.DeleteDevice(id);
             return RedirectToAction(nameof(Index));
         }
 
@@ -197,7 +189,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 return NotFound();
             }
 
-            var device = await _context.Devices.FirstAsync(m => m.DeviceId == id);
+            var device = _deviceRepository.GetDevice(id);
             var ownedBy = await _context.Users.FirstAsync(ob => ob.Id == device.ApplicationUserId);
             var requester = await _context.Users.FirstAsync(r => r.Id == userId);
 
@@ -223,7 +215,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 return NotFound();
             }
 
-            var device = await _context.Devices.FirstAsync(m => m.DeviceId == id);
+            var device = _deviceRepository.GetDevice(id);
             var ownedBy = await _context.Users.FirstAsync(ob => ob.Id == device.ApplicationUserId);
             var requester = await _context.Users.FirstAsync(r => r.Id == userId);
 
@@ -246,7 +238,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 device.IsActive = false;
             }
 
-            await _context.SaveChangesAsync();
+            _deviceRepository.UpdateDevice(device);
 
             MailRequest request = new MailRequest { To = "naels141@gmail.com", Subject = "Deivce Request Accepted" };
             request.PrepeareDeviceRequestAcceptBody(device);
@@ -268,7 +260,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 return NotFound();
             }
 
-            var device = await _context.Devices.FirstAsync(m => m.DeviceId == id);
+            var device = _deviceRepository.GetDevice(id);
             var ownedBy = await _context.Users.FirstAsync(ob => ob.Id == device.ApplicationUserId);
             var requester = await _context.Users.FirstAsync(r => r.Id == userId);
 
@@ -294,7 +286,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 return NotFound();
             }
 
-            var device = await _context.Devices.FirstAsync(m => m.DeviceId == id);
+            var device = _deviceRepository.GetDevice(id);
             var ownedBy = await _context.Users.FirstAsync(ob => ob.Id == device.ApplicationUserId);
 
             if (ownedBy.UserName == "OperationManager")
@@ -309,7 +301,8 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             device.OwnedBy = user.Result;
             device.ApplicationUserId = user.Result.Id;
             device.IsActive = false;
-            await _context.SaveChangesAsync();
+
+            _deviceRepository.UpdateDevice(device);
 
             if ((device == null) || (ownedBy == null))
             {
@@ -321,15 +314,13 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
 
         private bool DeviceExists(int id)
         {
-            return _context.Devices.Any(e => e.DeviceId == id);
+            return _deviceRepository.DeviceExists(id);
         }
 
         private void PopulateCategoriesDropDownList(object selectedCategory = null)
         {
-            var categoriesQuery = from c in _context.Categories
-                                   orderby c.Name
-                                   select c;
-            ViewBag.CategoryId = new SelectList(categoriesQuery.AsNoTracking(), "CategoryId", "Name", selectedCategory);
+            var categoriesQuery = _categoryRepository.GetAll().OrderBy(c => c.Name);
+            ViewBag.CategoryId = new SelectList(categoriesQuery, "CategoryId", "Name", selectedCategory);
         }
 
     }
