@@ -57,7 +57,7 @@
                     @Html.DisplayFor(modelItem => item.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.OwnedBy)
+                    @Html.DisplayFor(modelItem => item.OwnedBy.UserName)
                 </td>
                 <td>
                     @if (item.IsActive)
@@ -78,14 +78,14 @@
 
                     @if (User.IsInRole("User") || User.IsInRole("OperationManager"))
                     {
-                        @if (item.OwnedBy != UserManager.GetUserName(User))
+                        @if (item.OwnedBy.UserName != UserManager.GetUserName(User))
                         {
                             <a asp-action="Request" asp-route-id="@item.DeviceId" class="btn btn-success"
                                asp-route-userId="@UserManager.GetUserId(User)" style="padding: 0px 5px; margin:0px 3px">
                                 Request
                             </a>
                         }
-                        else if (item.OwnedBy == UserManager.GetUserName(User))
+                        else if (item.OwnedBy.UserName == UserManager.GetUserName(User))
                         {
                             <a asp-action="Release" asp-route-id="@item.DeviceId" title="Release"
                                class="btn btn-secondary" style="padding: 0px 5px; margin:0px 3px">

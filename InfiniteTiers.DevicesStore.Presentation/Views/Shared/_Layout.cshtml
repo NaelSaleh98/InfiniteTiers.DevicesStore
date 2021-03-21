@@ -23,10 +23,10 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarTabs">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index" style="font-size:xx-large">ITG Device Store</a>
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <ul class="navbar-nav mr-auto">
 
-                <ul class="navbar-nav mr-auto">
-                    @if (SignInManager.IsSignedIn(User))
-                    {
                         <li class="nav-item">
                             <a class="nav-link text-light" asp-area="" asp-controller="Devices" asp-action="Index" style="font-size:x-large">Devices</a>
                         </li>
@@ -40,36 +40,37 @@
                             </li>
 
                         }
-                    }
-                </ul>
 
-                <div class="dropdown">
-                    <a class="nav-link dropdown-toggle text-light" href="#" id="settings" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-cog fa-2x"></i>
-                    </a>
-                    <div class="dropdown-menu bg-primary" aria-labelledby="settings">
-                        <partial name="_LoginPartial.cshtml" />
+                    </ul>
+
+                    <div class="dropdown">
+                        <a class="nav-link dropdown-toggle text-light" href="#" id="settings" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-cog fa-2x"></i>
+                        </a>
+                        <div class="dropdown-menu bg-primary" aria-labelledby="settings">
+                            <partial name="_LoginPartial.cshtml" />
+                        </div>
                     </div>
+                }
                 </div>
-            </div>
 
-        </nav>
-    </header>
+            </nav>
+        </header>
 
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2021 - ITG Device Store - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
         </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
+
+        <footer class="border-top footer text-muted">
+            <div class="container">
+                &copy; 2021 - ITG Device Store - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </div>
+        </footer>
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        @await RenderSectionAsync("Scripts", required: false)
+    </body>
 </html>

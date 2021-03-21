@@ -29,6 +29,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         {
             var devices = _context.Devices
                         .Include(d => d.Category)
+                        .Include(d => d.OwnedBy)
                         .OrderBy(d => d.IsActive);
             if (!String.IsNullOrEmpty(searchString))
             {
@@ -48,6 +49,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
 
             var device = await _context.Devices
                 .Include(d => d.Category)
+                .Include(d => d.OwnedBy)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.DeviceId == id);
             if (device == null)
@@ -83,7 +85,6 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 var user = _context.Users.FirstOrDefaultAsync(u => u.Id == roleUser.Result.UserId);
                 device.ApplicationUserId = user.Result.Id;
                 device.IsActive = false;
-                device.OwnedBy = user.Result.UserName;
                 _context.Add(device);
 
                 await _context.SaveChangesAsync();
@@ -235,8 +236,8 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
 
 
             device.ApplicationUserId = requester.Id;
-            device.OwnedBy = requester.UserName;
-            if (device.OwnedBy != "OperationManager")
+            device.OwnedBy = requester;
+            if (device.OwnedBy.UserName != "OperationManager")
             {
                 device.IsActive = true;
             }
@@ -305,7 +306,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             var roleUser = _context.UserRoles.FirstOrDefaultAsync(ur => ur.RoleId == role.Result.Id);
             var user = _context.Users.FirstOrDefaultAsync(u => u.Id == roleUser.Result.UserId);
 
-            device.OwnedBy = user.Result.UserName;
+            device.OwnedBy = user.Result;
             device.ApplicationUserId = user.Result.Id;
             device.IsActive = false;
             await _context.SaveChangesAsync();
