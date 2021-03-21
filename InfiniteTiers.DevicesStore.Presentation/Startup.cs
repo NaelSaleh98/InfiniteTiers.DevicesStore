@@ -34,7 +34,7 @@ namespace InfiniteTiers.DevicesStore.Presentation
             services.AddTransient<IMailService, Services.MailService>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IDeviceRepository, DeviceRepository>();
-
+            services.AddScoped<IUserRepository, UserRepository>();
 
         }
 

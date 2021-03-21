@@ -20,14 +20,17 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         private readonly IMailService _mailService;
         private readonly IDeviceRepository _deviceRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IUserRepository _userRepository;
 
         public DevicesController(AuthDbContext context, IMailService mailService,
-                                IDeviceRepository deviceRepository, ICategoryRepository categoryRepository)
+                                IDeviceRepository deviceRepository, ICategoryRepository categoryRepository,
+                                IUserRepository userRepository)
         {
             _context = context;
             _mailService = mailService;
             _deviceRepository = deviceRepository;
             _categoryRepository = categoryRepository;
+            _userRepository = userRepository;
         }
 
         // GET: Devices
@@ -79,10 +82,8 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
 
             if (ModelState.IsValid)
             {
-                var role = _context.Roles.FirstOrDefaultAsync(r => r.Name == "OperationManager");
-                var roleUser = _context.UserRoles.FirstOrDefaultAsync(ur => ur.RoleId == role.Result.Id);
-                var user = _context.Users.FirstOrDefaultAsync(u => u.Id == roleUser.Result.UserId);
-                device.ApplicationUserId = user.Result.Id;
+                var user = _userRepository.GetUserByRole("OperationManager");
+                device.ApplicationUserId = user.Id;
                 device.IsActive = false;
 
                 _deviceRepository.SaveDevice(device);
@@ -190,8 +191,8 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             }
 
             var device = _deviceRepository.GetDevice(id);
-            var ownedBy = await _context.Users.FirstAsync(ob => ob.Id == device.ApplicationUserId);
-            var requester = await _context.Users.FirstAsync(r => r.Id == userId);
+            var ownedBy = _userRepository.GetUserById(device.ApplicationUserId);
+            var requester = _userRepository.GetUserById(userId);
 
             if ( (device == null) || (ownedBy == null) || (requester == null) )
             {
@@ -216,8 +217,8 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             }
 
             var device = _deviceRepository.GetDevice(id);
-            var ownedBy = await _context.Users.FirstAsync(ob => ob.Id == device.ApplicationUserId);
-            var requester = await _context.Users.FirstAsync(r => r.Id == userId);
+            var ownedBy = _userRepository.GetUserById(device.ApplicationUserId);
+            var requester = _userRepository.GetUserById(userId);
 
 
 
@@ -261,8 +262,8 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             }
 
             var device = _deviceRepository.GetDevice(id);
-            var ownedBy = await _context.Users.FirstAsync(ob => ob.Id == device.ApplicationUserId);
-            var requester = await _context.Users.FirstAsync(r => r.Id == userId);
+            var ownedBy = _userRepository.GetUserById(device.ApplicationUserId);
+            var requester = _userRepository.GetUserById(userId);
 
 
             if ((device == null) || (ownedBy == null) || (requester == null))
@@ -279,7 +280,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
 
         [Authorize(Roles = "User,OperationManager")]
         // GET: Devices/request/5?userId=12
-        public async Task<IActionResult> Release(int? id)
+        public IActionResult Release(int? id)
         {
             if ((id == null))
             {
@@ -287,19 +288,18 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             }
 
             var device = _deviceRepository.GetDevice(id);
-            var ownedBy = await _context.Users.FirstAsync(ob => ob.Id == device.ApplicationUserId);
+            var ownedBy = _userRepository.GetUserById(device.ApplicationUserId);
 
-            if (ownedBy.UserName == "OperationManager")
+            var role = _userRepository.GetRoleByUser(ownedBy.Id);
+            if (role.Name == "OperationManager")
             {
                 return RedirectToAction(nameof(Index));
             }
 
-            var role = _context.Roles.FirstOrDefaultAsync(r => r.Name == "OperationManager");
-            var roleUser = _context.UserRoles.FirstOrDefaultAsync(ur => ur.RoleId == role.Result.Id);
-            var user = _context.Users.FirstOrDefaultAsync(u => u.Id == roleUser.Result.UserId);
+            var user = _userRepository.GetUserByRole("OperationManager");
 
-            device.OwnedBy = user.Result;
-            device.ApplicationUserId = user.Result.Id;
+            device.OwnedBy = user;
+            device.ApplicationUserId = user.Id;
             device.IsActive = false;
 
             _deviceRepository.UpdateDevice(device);
