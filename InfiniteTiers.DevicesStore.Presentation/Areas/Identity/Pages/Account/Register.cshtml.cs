@@ -83,6 +83,11 @@ namespace InfiniteTiers.DevicesStore.Presentation.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
+                if(_userManager.Users.Any(u => u.UserName == Input.UserName))
+                {
+                    ModelState.AddModelError(string.Empty, "This username is already taken.");
+                    return Page();
+                }
                 var user = new ApplicationUser { UserName = Input.UserName, Email = Input.Email };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)

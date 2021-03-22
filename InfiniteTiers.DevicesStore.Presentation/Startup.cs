@@ -31,11 +31,21 @@ namespace InfiniteTiers.DevicesStore.Presentation
             services.AddControllersWithViews();
             services.AddRazorPages();
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
-            services.AddTransient<IMailService, Services.MailService>();
+            services.AddTransient<IMailService, MailService>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IDeviceRepository, DeviceRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IDeviceHistoryRepository, DeviceHistoryRepository>();
+            services.Configure<IdentityOptions>(options =>
+            {
+                // Password settings
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+                options.User.RequireUniqueEmail = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
