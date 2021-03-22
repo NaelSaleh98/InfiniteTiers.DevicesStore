@@ -1,32 +1,36 @@
 ﻿using InfiniteTiers.DevicesStore.Data.Models;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InfiniteTiers.DevicesStore.Logic.Repositories
 {
     public class UserRepository : IUserRepository
     {
+        #region private fields
         private readonly AuthDbContext _context;
+        private readonly ILogger _logger;
+        #endregion
 
-        public UserRepository (AuthDbContext context)
+        #region Constructor
+        public UserRepository(AuthDbContext context, ILogger<UserRepository> logger)
         {
             _context = context;
-        }
+            _logger = logger;
+        } 
+        #endregion
 
         #region private Methods
         private IdentityRole GetRoleByName(string name)
         {
-            var role = _context.Roles.FirstOrDefault(r => r.Name == name);
+            var role = _context.Roles.Single(r => r.Name == name);
             return role;
         }
 
         private IdentityRole GetRoleById(string id)
         {
-            var role = _context.Roles.FirstOrDefault(r => r.Id == id);
+            var role = _context.Roles.Single(r => r.Id == id);
             return role;
         }
 
@@ -38,17 +42,12 @@ namespace InfiniteTiers.DevicesStore.Logic.Repositories
 
         private IdentityUserRole<string> GetUserRoleByUser(string id)
         {
-            var userRole = _context.UserRoles.FirstOrDefault(ur => ur.UserId == id);
+            var userRole = _context.UserRoles.Single(ur => ur.UserId == id);
             return userRole;
-        } 
+        }
         #endregion
 
-        public ApplicationUser GetUserById(string id)
-        {
-            var user = _context.Users.FirstOrDefault(u => u.Id == id);
-            return user;
-        }
-
+        #region public methods
         public ApplicationUser GetUserByRole(string role)
         {
             var Role = GetRoleByName(role);
@@ -57,13 +56,22 @@ namespace InfiniteTiers.DevicesStore.Logic.Repositories
             return User;
         }
 
+        public ApplicationUser GetUserById(string id)
+        {
+            var user = _context.Users
+                       .Include(u => u.Devices)
+                       .Single(u => u.Id == id);
+            return user;
+        }
+
         public IdentityRole GetRoleByUser(string id)
         {
             var User = GetUserById(id);
             var UserRole = GetUserRoleByUser(User.Id);
             var Role = GetRoleById(UserRole.RoleId);
             return Role;
-        }
+        } 
+        #endregion
 
     }
 }
