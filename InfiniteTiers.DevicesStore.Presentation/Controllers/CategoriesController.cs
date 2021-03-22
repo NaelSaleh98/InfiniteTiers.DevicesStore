@@ -34,7 +34,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 return NotFound();
             }
 
-            var category = _categoryRepository.GetCategory(id);
+            var category = _categoryRepository.GetById(id);
             if (category == null)
             {
                 return NotFound();
@@ -58,7 +58,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         {
             if (ModelState.IsValid)
             {
-                _categoryRepository.SaveCategory(category);
+                _categoryRepository.Save(category);
                 return RedirectToAction(nameof(Index));
             }
             return View(category);
@@ -72,7 +72,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 return NotFound();
             }
 
-            var category = _categoryRepository.GetCategory(id);
+            var category = _categoryRepository.GetById(id);
             if (category == null)
             {
                 return NotFound();
@@ -96,11 +96,11 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             {
                 try
                 {
-                    _categoryRepository.UpdateCategory(category);
+                    _categoryRepository.Update(category);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CategoryExists(category.CategoryId))
+                    if (!_categoryRepository.IsExist(category.CategoryId))
                     {
                         return NotFound();
                     }
@@ -122,7 +122,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 return NotFound();
             }
 
-            var category = _categoryRepository.GetCategory(id);
+            var category = _categoryRepository.GetById(id);
 
             if (category == null)
             {
@@ -135,15 +135,11 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         // POST: Categories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int? id)
         {
-            _categoryRepository.DeleteCategory(id);
+            _categoryRepository.Delete(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CategoryExists(int id)
-        {
-            return _categoryRepository.CategoryExists(id);
-        }
     }
 }

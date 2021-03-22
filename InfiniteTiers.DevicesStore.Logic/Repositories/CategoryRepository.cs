@@ -1,5 +1,6 @@
 ﻿using InfiniteTiers.DevicesStore.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,55 +8,86 @@ namespace InfiniteTiers.DevicesStore.Logic.Repositories
 {
     public class CategoryRepository : ICategoryRepository
     {
+        #region private fields
         private readonly AuthDbContext _context;
+        private readonly ILogger _logger;
+        #endregion
 
-        public CategoryRepository (AuthDbContext context)
+        #region Constructor
+        public CategoryRepository(AuthDbContext context, ILogger<CategoryRepository> logger)
         {
             _context = context;
+            _logger = logger;
         }
+        #endregion
 
+        #region Public methods
         public IEnumerable<Category> GetAll()
         {
             var categories = _context.Categories
                             .Include(c => c.Devices)
                             .OrderBy(c => c.Name);
-            return categories.ToList();
+            return categories;
         }
 
-        public  Category GetCategory(int? id)
+        public Category GetById(int? id)
         {
-            var category =  _context.Categories
+            var category = _context.Categories
                             .Include(c => c.Devices)
-                            .AsNoTracking()
-                            .FirstOrDefault(m => m.CategoryId == id);
-
+                            .Single(c => c.CategoryId == id);
             return category;
         }
 
-        public void SaveCategory(Category category)
+        public bool Save(Category category)
         {
-            _context.Add(category);
-            _context.SaveChanges();
+            try
+            {
+                _context.Add(category);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (System.Exception e)
+            {
+                _logger.LogInformation(e.Message);
+                return false;
+            }
         }
 
-        public void UpdateCategory(Category category)
+        public bool Update(Category category)
         {
-            _context.Update(category);
-            _context.SaveChanges();
+            try
+            {
+                _context.Update(category);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (System.Exception e)
+            {
+                _logger.LogInformation(e.Message);
+                return false;
+            }
         }
 
-        public void DeleteCategory(int id)
+        public bool Delete(int? id)
         {
-            var category =  _context.Categories
-                            .Include(c => c.Devices)
-                            .Single(c => c.CategoryId == id);
-            _context.Categories.Remove(category);
-            _context.SaveChanges();
+            try
+            {
+                var category = GetById(id);
+                _context.Categories.Remove(category);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (System.Exception e)
+            {
+                _logger.LogInformation(e.Message);
+                return false;
+            }
         }
 
-        public bool CategoryExists(int id)
+        public bool IsExist(int id)
         {
-            return _context.Categories.Any(e => e.CategoryId == id);
-        }
+            return _context.Categories.Any(c => c.CategoryId == id);
+        } 
+        #endregion
     }
 }
