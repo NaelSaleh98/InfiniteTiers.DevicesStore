@@ -9,13 +9,18 @@
 <div class="col-md-10 offset-md-1">
     <section>
         <div class="login-form-icon">
-            <i class="fas fa-user-circle fa-9x text-secondary"></i>
+            <i class="fas fa-user-circle fa-9x text-primary"></i>
         </div>
         <form id="account" method="post">
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Input.UserName"></label>
-                <input asp-for="Input.UserName" class="form-control" />
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">@@</div>
+                    </div>
+                    <input asp-for="Input.UserName" class="form-control" />
+                </div>
                 <span asp-validation-for="Input.UserName" class="text-danger"></span>
             </div>
             <div class="form-group">
