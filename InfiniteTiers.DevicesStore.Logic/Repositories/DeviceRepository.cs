@@ -1,67 +1,96 @@
 ﻿using InfiniteTiers.DevicesStore.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InfiniteTiers.DevicesStore.Logic.Repositories
 {
     public class DeviceRepository : IDeviceRepository
     {
+        #region private fields
         private readonly AuthDbContext _context;
+        private readonly ILogger _logger;
+        #endregion
 
-        public DeviceRepository (AuthDbContext context)
+        #region Constructor
+        public DeviceRepository(AuthDbContext context, ILogger<DeviceRepository> logger)
         {
             _context = context;
+            _logger = logger;
         }
+        #endregion
 
-
-        public IEnumerable<Device> GetDevices()
+        #region Public methods
+        public IEnumerable<Device> GetAll()
         {
             var devices = _context.Devices
-                            .Include(d => d.Category)
-                            .Include(d => d.OwnedBy)
-                            .OrderBy(d => d.IsActive);
-
-            return devices.ToList();
+                        .Include(d => d.Category)
+                        .Include(d => d.OwnedBy)
+                        .OrderBy(d => d.IsActive);
+            return devices;
         }
 
-        public Device GetDevice(int? id)
-        {
-            var device =  _context.Devices
-                .Include(d => d.Category)
-                .Include(d => d.OwnedBy)
-                .AsNoTracking()
-                .FirstOrDefault(m => m.DeviceId == id);
-
-            return device;
-        }
-        public void SaveDevice(Device device)
-        {
-            _context.Add(device);
-
-            _context.SaveChanges();
-        }
-        public void UpdateDevice(Device device)
-        {
-            _context.Update(device);
-            _context.SaveChanges();
-        }
-
-        public void DeleteDevice(int id)
+        public Device GetById(int? id)
         {
             var device = _context.Devices
-                .Include(d => d.Category)
-                .Include(d => d.OwnedBy)
-                .Single(d => d.DeviceId == id);
-            _context.Devices.Remove(device);
-            _context.SaveChanges();
+                        .Include(d => d.Category)
+                        .Include(d => d.OwnedBy)
+                        .Single(m => m.DeviceId == id);
+            return device;
         }
-        public bool DeviceExists(int id)
+
+        public bool Save(Device device)
+        {
+            try
+            {
+                _context.Add(device);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogInformation(e.Message);
+                return false;
+            }
+        }
+
+        public bool Update(Device device)
+        {
+            try
+            {
+                _context.Update(device);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogInformation(e.Message);
+                return false;
+            }
+        }
+
+        public bool Delete(int id)
+        {
+            try
+            {
+                var device = GetById(id);
+                _context.Devices.Remove(device);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogInformation(e.Message);
+                return false;
+            }
+        }
+
+        public bool IsExist(int id)
         {
             return _context.Devices.Any(e => e.DeviceId == id);
-        }
+        } 
+        #endregion
     }
 }

@@ -23,7 +23,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         // GET: Devices
         public IActionResult Index()
         {
-            var devices = _deviceRepository.GetDevices();
+            var devices = _deviceRepository.GetAll();
 
             return View(devices.ToList());
         }
@@ -42,7 +42,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             {
                 return NotFound();
             }
-            var device = _deviceRepository.GetDevice(id);
+            var device = _deviceRepository.GetById(id);
             ViewData["Device"] = device.Name;
 
             return View(history);

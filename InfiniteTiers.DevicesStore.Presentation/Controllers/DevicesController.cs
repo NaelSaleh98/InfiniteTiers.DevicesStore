@@ -37,7 +37,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         // GET: Devices
         public IActionResult Index(string searchString)
         {
-            var devices = _deviceRepository.GetDevices();
+            var devices = _deviceRepository.GetAll();
             if (!String.IsNullOrEmpty(searchString))
             {
                 devices = devices.Where(d => d.Name.Contains(searchString));
@@ -54,7 +54,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 return NotFound();
             }
 
-            var device = _deviceRepository.GetDevice(id);
+            var device = _deviceRepository.GetById(id);
             if (device == null)
             {
                 return NotFound();
@@ -87,7 +87,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 device.ApplicationUserId = user.Id;
                 device.IsActive = false;
 
-                _deviceRepository.SaveDevice(device);
+                _deviceRepository.Save(device);
                 return RedirectToAction(nameof(Index));
             }
             PopulateCategoriesDropDownList(device.CategoryId);
@@ -104,7 +104,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 return NotFound();
             }
 
-            var device = _deviceRepository.GetDevice(id);
+            var device = _deviceRepository.GetById(id);
 
             if (device == null)
             {
@@ -131,11 +131,11 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             {
                 try
                 {
-                    _deviceRepository.UpdateDevice(device);
+                    _deviceRepository.Update(device);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!DeviceExists(device.DeviceId))
+                    if (!_deviceRepository.IsExist(device.DeviceId))
                     {
                         return NotFound();
                     }
@@ -161,7 +161,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 return NotFound();
             }
 
-            var device = _deviceRepository.GetDevice(id);
+            var device = _deviceRepository.GetById(id);
             if (device == null)
             {
                 return NotFound();
@@ -178,7 +178,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            _deviceRepository.DeleteDevice(id);
+            _deviceRepository.Delete(id);
             return RedirectToAction(nameof(Index));
         }
 
@@ -191,7 +191,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 return NotFound();
             }
 
-            var device = _deviceRepository.GetDevice(id);
+            var device = _deviceRepository.GetById(id);
             var ownedBy = _userRepository.GetUserById(device.ApplicationUserId);
             var requester = _userRepository.GetUserById(userId);
 
@@ -217,7 +217,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 return NotFound();
             }
 
-            var device = _deviceRepository.GetDevice(id);
+            var device = _deviceRepository.GetById(id);
             var ownedBy = _userRepository.GetUserById(device.ApplicationUserId);
             var requester = _userRepository.GetUserById(userId);
 
@@ -240,7 +240,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 device.IsActive = false;
             }
 
-            _deviceRepository.UpdateDevice(device);
+            _deviceRepository.Update(device);
 
             MailRequest request = new MailRequest { To = "naels141@gmail.com", Subject = "Deivce Request Accepted" };
             request.PrepeareDeviceRequestAcceptBody(device);
@@ -261,7 +261,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 return NotFound();
             }
 
-            var device = _deviceRepository.GetDevice(id);
+            var device = _deviceRepository.GetById(id);
             var ownedBy = _userRepository.GetUserById(device.ApplicationUserId);
             var requester = _userRepository.GetUserById(userId);
 
@@ -287,7 +287,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 return NotFound();
             }
 
-            var device = _deviceRepository.GetDevice(id);
+            var device = _deviceRepository.GetById(id);
             var ownedBy = _userRepository.GetUserById(device.ApplicationUserId);
 
             var role = _userRepository.GetRoleByUser(ownedBy.Id);
@@ -302,17 +302,12 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             device.ApplicationUserId = user.Id;
             device.IsActive = false;
 
-            _deviceRepository.UpdateDevice(device);
+            _deviceRepository.Update(device);
 
             UserDevice userDevice = new UserDevice { Device = device, FromUser = ownedBy, ToUser = user, TransactionDate = DateTime.Now };
             _historyRepository.Save(userDevice);
 
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool DeviceExists(int id)
-        {
-            return _deviceRepository.DeviceExists(id);
         }
 
         private void PopulateCategoriesDropDownList(object selectedCategory = null)
