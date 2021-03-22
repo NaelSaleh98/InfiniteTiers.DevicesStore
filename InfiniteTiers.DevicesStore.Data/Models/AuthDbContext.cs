@@ -8,10 +8,11 @@ namespace InfiniteTiers.DevicesStore.Data.Models
     {
         public AuthDbContext(DbContextOptions<AuthDbContext> options): base(options){}
 
+        #region Database Sets
         public DbSet<Category> Categories { get; set; }
-
         public DbSet<Device> Devices { get; set; }
-        public DbSet<UserDevice> UserDevices { get; set; }
+        public DbSet<UserDevice> UserDevices { get; set; } 
+        #endregion
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

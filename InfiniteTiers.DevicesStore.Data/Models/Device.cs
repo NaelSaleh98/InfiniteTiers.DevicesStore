@@ -3,8 +3,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace InfiniteTiers.DevicesStore.Data.Models
 {
+    /// <summary>
+    /// Device or Item has information about itself, category name and the owner user.
+    /// </summary>
     public class Device
     {
+        #region Basic
         public int DeviceId { get; set; }
 
         [StringLength(60, MinimumLength = 3)]
@@ -30,9 +34,13 @@ namespace InfiniteTiers.DevicesStore.Data.Models
         public DateTime PurchaseDate { get; set; }
 
         public bool IsActive { get; set; }
+        #endregion
+
+        #region Relationships
         public int CategoryId { get; set; }
         public Category Category { get; set; }
         public string ApplicationUserId { get; set; }
-        public ApplicationUser OwnedBy { get; set; }
+        public ApplicationUser OwnedBy { get; set; } 
+        #endregion
     }
 }
