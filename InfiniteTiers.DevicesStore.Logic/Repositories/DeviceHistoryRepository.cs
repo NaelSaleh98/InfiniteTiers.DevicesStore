@@ -1,38 +1,53 @@
 ﻿using InfiniteTiers.DevicesStore.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InfiniteTiers.DevicesStore.Logic.Repositories
 {
     public class DeviceHistoryRepository : IDeviceHistoryRepository
     {
+        #region private fields
         private readonly AuthDbContext _context;
+        private readonly ILogger _logger;
+        #endregion
 
-        public DeviceHistoryRepository(AuthDbContext context)
+        #region Constructor
+        public DeviceHistoryRepository(AuthDbContext context, ILogger<DeviceHistoryRepository> logger)
         {
             _context = context;
+            _logger = logger;
+        }
+        #endregion
+
+        #region Public methods
+        public bool Save(UserDevice userDevice)
+        {
+            try
+            {
+                _context.UserDevices.Add(userDevice);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogInformation(e.Message);
+                return false;
+            }
         }
 
-        public void SaveDeviceHistory(UserDevice userDevice)
+        public IEnumerable<UserDevice> GetById(int? deviceId)
         {
-            _context.UserDevices.Add(userDevice);
-            _context.SaveChanges();
-        }
-
-        public IEnumerable<UserDevice> GetDeviceHistory(int? deviceId)
-        {
-            var history = from h in _context.UserDevices
-                              .Include(us => us.FromUser)
-                              .Include(us => us.ToUser)
-                              .OrderByDescending(us => us.TransactionDate)
-                          where h.Device.DeviceId == deviceId
-                          select h;
-
+            var history = _context.UserDevices
+                        .Include(us => us.FromUser)
+                        .Include(us => us.ToUser)
+                        .Include(us => us.Device)
+                        .Where(us => us.Device.DeviceId == deviceId)
+                        .OrderByDescending(us => us.TransactionDate);
             return history;
-        }
+        } 
+        #endregion
     }
 }

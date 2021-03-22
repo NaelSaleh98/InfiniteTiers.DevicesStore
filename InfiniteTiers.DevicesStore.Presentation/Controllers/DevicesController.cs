@@ -247,7 +247,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             await _mailService.SendEmailAsync(request);
 
             UserDevice userDevice = new UserDevice { Device = device, FromUser = ownedBy, ToUser = requester, TransactionDate = DateTime.Now };
-            _historyRepository.SaveDeviceHistory(userDevice);
+            _historyRepository.Save(userDevice);
 
             return RedirectToAction(nameof(Index));
         }
@@ -305,7 +305,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             _deviceRepository.UpdateDevice(device);
 
             UserDevice userDevice = new UserDevice { Device = device, FromUser = ownedBy, ToUser = user, TransactionDate = DateTime.Now };
-            _historyRepository.SaveDeviceHistory(userDevice);
+            _historyRepository.Save(userDevice);
 
             return RedirectToAction(nameof(Index));
         }

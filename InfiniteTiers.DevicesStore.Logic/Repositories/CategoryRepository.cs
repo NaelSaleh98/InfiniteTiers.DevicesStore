@@ -1,6 +1,7 @@
 ﻿using InfiniteTiers.DevicesStore.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -46,7 +47,7 @@ namespace InfiniteTiers.DevicesStore.Logic.Repositories
                 _context.SaveChanges();
                 return true;
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 _logger.LogInformation(e.Message);
                 return false;
@@ -61,7 +62,7 @@ namespace InfiniteTiers.DevicesStore.Logic.Repositories
                 _context.SaveChanges();
                 return true;
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 _logger.LogInformation(e.Message);
                 return false;
@@ -77,7 +78,7 @@ namespace InfiniteTiers.DevicesStore.Logic.Repositories
                 _context.SaveChanges();
                 return true;
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 _logger.LogInformation(e.Message);
                 return false;

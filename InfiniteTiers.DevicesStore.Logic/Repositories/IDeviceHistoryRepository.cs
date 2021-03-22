@@ -1,16 +1,22 @@
 ﻿using InfiniteTiers.DevicesStore.Data.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InfiniteTiers.DevicesStore.Logic.Repositories
 {
     public interface IDeviceHistoryRepository
     {
-        public void SaveDeviceHistory(UserDevice userDevice);
+        /// <summary>
+        /// save new history record.
+        /// </summary>
+        /// <param name="userDevice"></param>
+        /// <returns>true if success, false if failed.</returns>
+        public bool Save(UserDevice userDevice);
 
-        public IEnumerable<UserDevice> GetDeviceHistory(int? deviceId);
+        /// <summary>
+        /// Get device history by device id.
+        /// </summary>
+        /// <param name="deviceId"></param>
+        /// <returns>All device transactions.</returns>
+        public IEnumerable<UserDevice> GetById(int? deviceId);
     }
 }

@@ -36,7 +36,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 return NotFound();
             }
 
-            var history = _historyRepository.GetDeviceHistory(id);
+            var history = _historyRepository.GetById(id);
 
             if (history == null)
             {
