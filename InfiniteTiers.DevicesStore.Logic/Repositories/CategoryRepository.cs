@@ -22,6 +22,19 @@ namespace InfiniteTiers.DevicesStore.Logic.Repositories
         }
         #endregion
 
+        #region private methods
+        private bool DeleteRelatedData(Category category)
+        {
+            foreach (var device in category.Devices)
+            {
+                var ud = _context.UserDevices.Where(ud => ud.Device.DeviceId == device.DeviceId);
+                _context.RemoveRange(ud);
+                _context.SaveChanges();
+            }
+            return true;
+        } 
+        #endregion
+
         #region Public methods
         public IEnumerable<Category> GetAll()
         {
@@ -35,7 +48,7 @@ namespace InfiniteTiers.DevicesStore.Logic.Repositories
         {
             var category = _context.Categories
                             .Include(c => c.Devices)
-                            .Single(c => c.CategoryId == id);
+                            .FirstOrDefault(c => c.CategoryId == id);
             return category;
         }
 
@@ -74,6 +87,7 @@ namespace InfiniteTiers.DevicesStore.Logic.Repositories
             try
             {
                 var category = GetById(id);
+                DeleteRelatedData(category);
                 _context.Categories.Remove(category);
                 _context.SaveChanges();
                 return true;

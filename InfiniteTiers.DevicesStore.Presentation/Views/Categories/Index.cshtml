@@ -49,6 +49,11 @@
         }
     </tbody>
 </table>
+
+@if (Model.Count() < 1)
+{
+    <h4 class="text-center text-danger">No Categories.</h4>
+}
 <style>
     td, th {
         text-align: center;

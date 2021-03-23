@@ -1,10 +1,9 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using InfiniteTiers.DevicesStore.Data.Models;
+using InfiniteTiers.DevicesStore.Logic.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using InfiniteTiers.DevicesStore.Data.Models;
-using Microsoft.AspNetCore.Authorization;
-using InfiniteTiers.DevicesStore.Logic.Repositories;
+using System.Linq;
 
 namespace InfiniteTiers.DevicesStore.Presentation.Controllers
 {
@@ -20,14 +19,14 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         }
 
         // GET: Categories
-        public  IActionResult Index()
+        public IActionResult Index()
         {
-            var categories = _categoryRepository.GetAll();
+            var categories = _categoryRepository.GetAll().Take(10);
             return View(categories);
         }
 
         // GET: Categories/Details/5
-        public  IActionResult Details(int? id)
+        public IActionResult Details(int? id)
         {
             if (id == null)
             {
@@ -58,8 +57,14 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         {
             if (ModelState.IsValid)
             {
-                _categoryRepository.Save(category);
-                return RedirectToAction(nameof(Index));
+                if (_categoryRepository.Save(category))
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    return BadRequest();
+                }
             }
             return View(category);
         }
@@ -94,22 +99,18 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                if (!_categoryRepository.IsExist(category.CategoryId))
                 {
-                    _categoryRepository.Update(category);
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
+                else if (_categoryRepository.Update(category))
                 {
-                    if (!_categoryRepository.IsExist(category.CategoryId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                else
+                {
+                    return BadRequest();
+                }
             }
             return View(category);
         }
@@ -137,8 +138,14 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int? id)
         {
-            _categoryRepository.Delete(id);
-            return RedirectToAction(nameof(Index));
+            if (_categoryRepository.Delete(id))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
     }
