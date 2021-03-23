@@ -80,14 +80,14 @@
                     {
                         @if (item.OwnedBy.UserName != UserManager.GetUserName(User))
                         {
-                            <a asp-action="Request" asp-route-id="@item.DeviceId" class="btn btn-success"
+                            <a asp-action="RequestDevice" asp-controller="TransactionsHistory" asp-route-id="@item.DeviceId" class="btn btn-success"
                                asp-route-userId="@UserManager.GetUserId(User)" style="padding: 0px 5px; margin:0px 3px">
                                 Request
                             </a>
                         }
-                        else if (item.OwnedBy.UserName == UserManager.GetUserName(User))
+                        else if ( (item.OwnedBy.UserName == UserManager.GetUserName(User)) && User.IsInRole("User"))
                         {
-                            <a asp-action="Release" asp-route-id="@item.DeviceId" title="Release"
+                            <a asp-action="ReleaseDevice" asp-controller="TransactionsHistory" asp-route-id="@item.DeviceId" title="Release"
                                class="btn btn-secondary" style="padding: 0px 5px; margin:0px 3px">
                                 Release
                             </a>

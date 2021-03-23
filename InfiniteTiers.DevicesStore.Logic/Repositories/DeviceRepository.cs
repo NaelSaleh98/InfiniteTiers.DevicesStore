@@ -31,6 +31,7 @@ namespace InfiniteTiers.DevicesStore.Logic.Repositories
         }
 
         #endregion
+
         #region Public methods
         public IEnumerable<Device> GetAll()
         {
