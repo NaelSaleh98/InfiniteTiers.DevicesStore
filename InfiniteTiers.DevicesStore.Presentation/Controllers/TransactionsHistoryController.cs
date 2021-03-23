@@ -4,9 +4,7 @@ using InfiniteTiers.DevicesStore.Presentation.Models;
 using InfiniteTiers.DevicesStore.Presentation.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace InfiniteTiers.DevicesStore.Presentation.Controllers
@@ -28,16 +26,6 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             _historyRepository = historyRepository;
             _userRepository = userRepository;
             _mailService = mailService;
-        }
-
-        [Authorize(Roles = "Admin")]
-
-        // GET: Devices
-        public IActionResult Index()
-        {
-            var devices = _deviceRepository.GetAll();
-
-            return View(devices.ToList());
         }
 
         [Authorize(Roles = "Admin")]

@@ -2,7 +2,6 @@
 using InfiniteTiers.DevicesStore.Logic.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace InfiniteTiers.DevicesStore.Presentation.Controllers

@@ -1,15 +1,11 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using InfiniteTiers.DevicesStore.Data.Models;
+using InfiniteTiers.DevicesStore.Logic.Repositories;
+using InfiniteTiers.DevicesStore.Presentation.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using InfiniteTiers.DevicesStore.Data.Models;
-using Microsoft.AspNetCore.Authorization;
-using InfiniteTiers.DevicesStore.Presentation.Services;
-using InfiniteTiers.DevicesStore.Presentation.Models;
-using InfiniteTiers.DevicesStore.Logic.Repositories;
-using System.Collections.Generic;
+using System;
+using System.Linq;
 
 namespace InfiniteTiers.DevicesStore.Presentation.Controllers
 {

@@ -85,7 +85,7 @@
                                 Request
                             </a>
                         }
-                        else if ( (item.OwnedBy.UserName == UserManager.GetUserName(User)) && User.IsInRole("User"))
+                        else if ((item.OwnedBy.UserName == UserManager.GetUserName(User)) && User.IsInRole("User"))
                         {
                             <a asp-action="ReleaseDevice" asp-controller="TransactionsHistory" asp-route-id="@item.DeviceId" title="Release"
                                class="btn btn-secondary" style="padding: 0px 5px; margin:0px 3px">
@@ -112,6 +112,9 @@
                                 <i class="far fa-trash-alt"></i>
                             </a>
 
+                            <a asp-action="History" asp-controller="TransactionsHistory" asp-route-id="@item.DeviceId" style="padding: 0px 5px; margin:0px 3px">
+                                <i class="far fa-history"></i>
+                            </a>
                         }
                     }
 
