@@ -24,13 +24,13 @@ namespace InfiniteTiers.DevicesStore.Logic.Repositories
         #region private Methods
         private IdentityRole GetRoleByName(string name)
         {
-            var role = _context.Roles.Single(r => r.Name == name);
+            var role = _context.Roles.FirstOrDefault(r => r.Name == name);
             return role;
         }
 
         private IdentityRole GetRoleById(string id)
         {
-            var role = _context.Roles.Single(r => r.Id == id);
+            var role = _context.Roles.FirstOrDefault(r => r.Id == id);
             return role;
         }
 
@@ -42,7 +42,7 @@ namespace InfiniteTiers.DevicesStore.Logic.Repositories
 
         private IdentityUserRole<string> GetUserRoleByUser(string id)
         {
-            var userRole = _context.UserRoles.Single(ur => ur.UserId == id);
+            var userRole = _context.UserRoles.FirstOrDefault(ur => ur.UserId == id);
             return userRole;
         }
         #endregion
@@ -51,7 +51,16 @@ namespace InfiniteTiers.DevicesStore.Logic.Repositories
         public ApplicationUser GetUserByRole(string role)
         {
             var Role = GetRoleByName(role);
+            if (Role == null)
+            {
+                return null;
+            }
             var UserRole = GetUserRoleByRole(Role.Id);
+            if (UserRole == null)
+            {
+                return null;
+
+            }
             var User = GetUserById(UserRole.UserId);
             return User;
         }
@@ -60,14 +69,22 @@ namespace InfiniteTiers.DevicesStore.Logic.Repositories
         {
             var user = _context.Users
                        .Include(u => u.Devices)
-                       .Single(u => u.Id == id);
+                       .FirstOrDefault(u => u.Id == id);
             return user;
         }
 
         public IdentityRole GetRoleByUser(string id)
         {
             var User = GetUserById(id);
+            if (User == null)
+            {
+                return null;
+            }
             var UserRole = GetUserRoleByUser(User.Id);
+            if (UserRole == null)
+            {
+                return null;
+            }
             var Role = GetRoleById(UserRole.RoleId);
             return Role;
         } 

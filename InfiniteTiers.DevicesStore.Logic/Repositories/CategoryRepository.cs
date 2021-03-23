@@ -23,7 +23,7 @@ namespace InfiniteTiers.DevicesStore.Logic.Repositories
         #endregion
 
         #region private methods
-        private bool DeleteRelatedData(Category category)
+        private void DeleteRelatedData(Category category)
         {
             foreach (var device in category.Devices)
             {
@@ -31,7 +31,6 @@ namespace InfiniteTiers.DevicesStore.Logic.Repositories
                 _context.RemoveRange(ud);
                 _context.SaveChanges();
             }
-            return true;
         } 
         #endregion
 
@@ -87,6 +86,10 @@ namespace InfiniteTiers.DevicesStore.Logic.Repositories
             try
             {
                 var category = GetById(id);
+                if (category == null)
+                {
+                    return false;
+                }
                 DeleteRelatedData(category);
                 _context.Categories.Remove(category);
                 _context.SaveChanges();

@@ -42,7 +42,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             {
                 devices = devices.Where(d => d.Name.Contains(searchString));
             }
-            return View(devices.ToList());
+            return View(devices.ToList().Take(10));
         }
 
         [Authorize(Roles = "Admin,OperationManager")]
@@ -84,11 +84,18 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             if (ModelState.IsValid)
             {
                 var user = _userRepository.GetUserByRole("OperationManager");
-                device.ApplicationUserId = user.Id;
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                device.OwnedBy = user;
                 device.IsActive = false;
 
-                _deviceRepository.Save(device);
-                return RedirectToAction(nameof(Index));
+                if (_deviceRepository.Save(device))
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                return BadRequest();
             }
             PopulateCategoriesDropDownList(device.CategoryId);
             return View(device);
@@ -129,22 +136,18 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                if (!_deviceRepository.IsExist(device.DeviceId))
                 {
-                    _deviceRepository.Update(device);
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
+                else if (_deviceRepository.Update(device))
                 {
-                    if (!_deviceRepository.IsExist(device.DeviceId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                else
+                {
+                    return BadRequest();
+                }
             }
 
             PopulateCategoriesDropDownList(device.CategoryId);
@@ -178,8 +181,14 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            _deviceRepository.Delete(id);
-            return RedirectToAction(nameof(Index));
+            if (_deviceRepository.Delete(id))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         [Authorize(Roles = "User,OperationManager")]

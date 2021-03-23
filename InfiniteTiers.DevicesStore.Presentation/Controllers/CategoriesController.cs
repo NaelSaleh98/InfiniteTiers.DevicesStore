@@ -61,10 +61,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 {
                     return RedirectToAction(nameof(Index));
                 }
-                else
-                {
-                    return BadRequest();
-                }
+                return BadRequest();
             }
             return View(category);
         }

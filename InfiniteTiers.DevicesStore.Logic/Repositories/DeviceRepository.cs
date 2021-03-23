@@ -22,13 +22,23 @@ namespace InfiniteTiers.DevicesStore.Logic.Repositories
         }
         #endregion
 
+        #region private methods
+        private void DeleteRelatedDate(Device device)
+        {
+            var ud = _context.UserDevices.Where(ud => ud.Device.DeviceId == device.DeviceId);
+            _context.RemoveRange(ud);
+            _context.SaveChanges();
+        }
+
+        #endregion
         #region Public methods
         public IEnumerable<Device> GetAll()
         {
             var devices = _context.Devices
                         .Include(d => d.Category)
                         .Include(d => d.OwnedBy)
-                        .OrderBy(d => d.IsActive);
+                        .OrderBy(d => d.IsActive)
+                        .ThenBy(d => d.Name);
             return devices;
         }
 
@@ -37,7 +47,7 @@ namespace InfiniteTiers.DevicesStore.Logic.Repositories
             var device = _context.Devices
                         .Include(d => d.Category)
                         .Include(d => d.OwnedBy)
-                        .Single(m => m.DeviceId == id);
+                        .FirstOrDefault(d => d.DeviceId == id);
             return device;
         }
 
@@ -76,6 +86,11 @@ namespace InfiniteTiers.DevicesStore.Logic.Repositories
             try
             {
                 var device = GetById(id);
+                if (device == null)
+                {
+                    return false;
+                }
+                DeleteRelatedDate(device);
                 _context.Devices.Remove(device);
                 _context.SaveChanges();
                 return true;
