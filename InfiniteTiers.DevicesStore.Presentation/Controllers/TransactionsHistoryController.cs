@@ -95,6 +95,12 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 return BadRequest();
             }
 
+            UserDevice userDevice = new UserDevice { Device = device, FromUser = device.OwnedBy, ToUser = requester, TransactionDate = DateTime.Now };
+            if (!_historyRepository.Save(userDevice))
+            {
+                return BadRequest();
+            }
+
             device.OwnedBy = requester;
             if (device.OwnedBy.UserName == "OperationManager")
             {
@@ -110,11 +116,7 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 return BadRequest();
             }
 
-            UserDevice userDevice = new UserDevice { Device = device, FromUser = device.OwnedBy, ToUser = requester, TransactionDate = DateTime.Now };
-            if (!_historyRepository.Save(userDevice))
-            {
-                return BadRequest();
-            }
+
 
             MailRequest request = new MailRequest { To = "naels141@gmail.com", Subject = "Deivce Request Accepted" };
             request.PrepeareDeviceRequestAcceptBody(device);
@@ -174,6 +176,13 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
             {
                 return BadRequest();
             }
+
+            UserDevice userDevice = new UserDevice { Device = device, FromUser = device.OwnedBy, ToUser = user, TransactionDate = DateTime.Now };
+            if (!_historyRepository.Save(userDevice))
+            {
+                return BadRequest();
+            }
+
             device.OwnedBy = user;
             device.IsActive = false;
 
@@ -182,11 +191,6 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 return BadRequest();
             }
 
-            UserDevice userDevice = new UserDevice { Device = device, FromUser = device.OwnedBy, ToUser = user, TransactionDate = DateTime.Now };
-            if (!_historyRepository.Save(userDevice))
-            {
-                return BadRequest();
-            }
             return RedirectToAction(nameof(Index), "Devices");
         }
 
