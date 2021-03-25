@@ -143,6 +143,11 @@ namespace InfiniteTiers.DevicesStore.Presentation.Controllers
                 return NotFound();
             }
 
+            if (device.OwnedBy.Equals(requester))
+            {
+                return BadRequest();
+            }
+
             MailRequest request = new MailRequest { To = "naels141@gmail.com", Subject = "Deivce Request Denied" };
             request.PrepeareDeviceRequestDenyBody(device);
             await _mailService.SendEmailAsync(request);
